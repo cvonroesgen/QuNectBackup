@@ -714,11 +714,12 @@ Public Class backup
             End If
             Exit Function
         End Try
-
+        Dim comma As String = ""
         For i = 0 To dr.FieldCount - 1
-            objWriter.Write("""")
+            objWriter.Write(comma & """")
             objWriter.Write(Replace(CStr(dr.GetName(i)), """", """"""))
-            objWriter.Write(""",")
+            objWriter.Write("""")
+            comma = ","
         Next
 
         objWriter.Write(vbCrLf)
@@ -730,10 +731,12 @@ Public Class backup
             lblProgress.Text = "Backing up " & k & " of " & recordCount
             Application.DoEvents()
             k += 1
+            comma = ""
             For i = 0 To dr.FieldCount - 1
                 Try
                     If dr.GetValue(i) Is Nothing Or IsDBNull(dr.GetValue(i)) Then
-                        objWriter.Write(",")
+                        objWriter.Write(comma)
+                        comma = ","
                         Continue For
                     End If
                 Catch ex As Exception
@@ -796,12 +799,13 @@ Public Class backup
                     Catch excpt As Exception
                         strCell = "Could not download " & strCell & " because " & excpt.Message
                     End Try
-                    objWriter.Write("""")
-                    objWriter.Write(Replace(strCell, """", """"""))
-                    objWriter.Write(""",")
-
+                objWriter.Write(comma & """")
+                objWriter.Write(Replace(strCell, """", """"""))
+                objWriter.Write("""")
+                comma = ","
             Next
             objWriter.Write(vbCrLf)
+            comma = ""
         End While
         pb.Visible = False
         lblProgress.Text = ""
