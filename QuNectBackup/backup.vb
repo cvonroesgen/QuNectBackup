@@ -11,6 +11,8 @@ Imports System.Configuration
 Public Class backup
 
     Private Const AppName = "QuNectBackup"
+    Private Const Title = "QuNect Backup"
+    Dim myBuildInfo As FileVersionInfo
     Private Const yearForAllFileURLs = 18
     Private cmdLineArgs() As String
     Private automode As Boolean = True
@@ -129,8 +131,8 @@ Public Class backup
             Me.Close()
         Else
             automode = False
-            Dim myBuildInfo As FileVersionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath)
-            Me.Text = "QuNect Backup " & myBuildInfo.ProductVersion
+            myBuildInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath)
+            Me.Text = Title & " " & myBuildInfo.ProductVersion
             If txtUsername.Text.Length > 0 And txtPassword.Text.Length > 0 And txtServer.Text.Length > 0 Then
                 If (cmbPassword.SelectedIndex = PasswordOrToken.password And txtAppToken.Text.Length > 0) Or cmbPassword.SelectedIndex = PasswordOrToken.token Then
                     tabs.SelectedIndex = 1
