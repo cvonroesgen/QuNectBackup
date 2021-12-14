@@ -30,6 +30,19 @@ Public Class backup
         Public result As Boolean
         Public okayCancel As DialogResult
     End Class
+    Enum arg
+        backupFolder = 1
+        dbids = 2
+        uid = 3
+        pwd = 4
+        server = 5
+        detectProxy = 6
+        dateFolders = 7
+        appFolders = 8
+        attachments = 9
+        logFile = 10
+    End Enum
+    Private logFile As StreamWriter
     Enum PasswordOrToken
         Neither = 0
         password = 1
@@ -97,41 +110,53 @@ Public Class backup
             SaveSettings()
         End If
         cmdLineArgs = System.Environment.GetCommandLineArgs()
+        myBuildInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath)
         If cmdLineArgs.Length > 1 Then
+            automode = True
             qdbAppName = ""
             appdbid = ""
             Dim dbids As String = ""
-            If cmdLineArgs.Length >= 10 Then
-                txtBackupFolder.Text = cmdLineArgs(1)
+            If cmdLineArgs.Length > arg.attachments Then
+                txtBackupFolder.Text = cmdLineArgs(arg.backupFolder)
                 dbids = cmdLineArgs(2)
-                txtUsername.Text = cmdLineArgs(3)
-                txtPassword.Text = cmdLineArgs(4)
-                txtServer.Text = cmdLineArgs(5)
-                If cmdLineArgs(6) = "1" Then
+                txtUsername.Text = cmdLineArgs(arg.uid)
+                txtPassword.Text = cmdLineArgs(arg.pwd)
+                txtServer.Text = cmdLineArgs(arg.server)
+                If cmdLineArgs(arg.detectProxy) = "1" Then
                     ckbDetectProxy.Checked = True
                 Else
                     ckbDetectProxy.Checked = False
                 End If
-                If cmdLineArgs(7) = "1" Then
+                If cmdLineArgs(arg.dateFolders) = "1" Then
                     ckbDateFolders.Checked = True
                 Else
                     ckbDateFolders.Checked = False
                 End If
-                If cmdLineArgs(8) = "1" Then
+                If cmdLineArgs(arg.appFolders) = "1" Then
                     ckbAppFolders.Checked = True
                 Else
                     ckbAppFolders.Checked = False
                 End If
-                cmbAttachments.SelectedIndex = CInt(cmdLineArgs(9))
+                cmbAttachments.SelectedIndex = CInt(cmdLineArgs(arg.attachments))
                 cmbPassword.SelectedIndex = PasswordOrToken.token
             End If
-            automode = True
+            If cmdLineArgs.Length > arg.logFile Then
+                'open log file
+                logFile = New StreamWriter(File.Open(cmdLineArgs(arg.logFile), FileMode.Append))
+                logFile.WriteLine()
+                logFile.WriteLine(DateTime.Now & " " & "Started backup: " & dbids)
+            End If
             listTables(dbids)
             backup()
+            If cmdLineArgs.Length > arg.logFile Then
+                'open log file
+                logFile.WriteLine(DateTime.Now & " " & "Finished backup: " & dbids)
+                logFile.Close()
+            End If
             Me.Close()
         Else
             automode = False
-            myBuildInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath)
+
             Me.Text = Title & " " & myBuildInfo.ProductVersion
             If txtUsername.Text.Length > 0 And txtPassword.Text.Length > 0 And txtServer.Text.Length > 0 Then
                 If (cmbPassword.SelectedIndex = PasswordOrToken.password And txtAppToken.Text.Length > 0) Or cmbPassword.SelectedIndex = PasswordOrToken.token Then
@@ -271,8 +296,9 @@ Public Class backup
     Sub timeoutCallback(ByVal result As System.IAsyncResult)
         If Not automode Then
             Me.Cursor = Cursors.Default
-            PopUpMsgBox("Operation timed out. Please try again.", MsgBoxStyle.OkOnly, AppName)
         End If
+        PopUpMsgBox("Operation timed out. Please try again.", MsgBoxStyle.OkOnly, AppName)
+
     End Sub
     Sub listTablesFromGetSchema(tables As DataTable, dbids As String)
         Dim configTableList As String = ""
@@ -543,9 +569,7 @@ Public Class backup
                         Try
                             quNectConn.Open()
                         Catch excpt As Exception
-                            If Not automode Then
-                                PopUpMsgBox(excpt.Message(), MsgBoxStyle.OkOnly, AppName)
-                            End If
+                            PopUpMsgBox(excpt.Message(), MsgBoxStyle.OkOnly, AppName)
                             quNectConn.Dispose()
                             Me.Cursor = Cursors.Default
                             Exit Sub
@@ -562,26 +586,24 @@ Public Class backup
                 quNectConn.Close()
                 quNectConn.Dispose()
             Catch excpt As Exception
-                If Not automode Then
-                    PopUpMsgBox(excpt.Message(), MsgBoxStyle.OkOnly, AppName)
-                End If
+                PopUpMsgBox(excpt.Message(), MsgBoxStyle.OkOnly, AppName)
                 quNectConn.Dispose()
                 Me.Cursor = Cursors.Default
                 Exit Sub
             End Try
         End Using
         Me.Cursor = Cursors.Default
-        If Not automode Then
-            If lstBackup.Items.Count = 1 And backupCounter = 1 Then
-                PopUpMsgBox("Your table has been backed up!", MsgBoxStyle.OkOnly, AppName)
-            ElseIf lstBackup.Items.Count = 1 And backupCounter = 0 Then
-                PopUpMsgBox("Sorry, your table was not backed up.", MsgBoxStyle.OkOnly, AppName)
-            ElseIf backupCounter = 0 Then
-                PopUpMsgBox("Sorry, none of your tables were  backed up.", MsgBoxStyle.OkOnly, AppName)
-            Else
-                PopUpMsgBox(backupCounter & " of " & lstBackup.Items.Count & " tables were backed up.", MsgBoxStyle.OkOnly, AppName)
-            End If
+
+        If lstBackup.Items.Count = 1 And backupCounter = 1 Then
+            PopUpMsgBox("Your table has been backed up!", MsgBoxStyle.OkOnly, AppName)
+        ElseIf lstBackup.Items.Count = 1 And backupCounter = 0 Then
+            PopUpMsgBox("Sorry, your table was not backed up.", MsgBoxStyle.OkOnly, AppName)
+        ElseIf backupCounter = 0 Then
+            PopUpMsgBox("Sorry, none of your tables were  backed up.", MsgBoxStyle.OkOnly, AppName)
+        Else
+            PopUpMsgBox(backupCounter & " of " & lstBackup.Items.Count & " tables were backed up.", MsgBoxStyle.OkOnly, AppName)
         End If
+
     End Sub
     Private Function backupTable(ByVal dbName As String, ByVal dbid As String, ByRef quNectConn As OdbcConnection) As backupResult
         'we need to get the schema of the table
@@ -972,13 +994,21 @@ Public Class backup
         frmCommandLine.ShowDialog()
     End Sub
     Private Function PopUpMsgBox(msg As String) As MsgBoxResult
-        If Not automode Or cmdLineArgs.Length > 10 Then
+        If automode Then
+            If cmdLineArgs.Length > arg.logFile Then
+                logFile.WriteLine(DateTime.Now & " " & msg)
+            End If
+        Else
             Return MsgBox(msg)
         End If
     End Function
     Private Function PopUpMsgBox(msg As String, Style As MsgBoxStyle, Title As String) As MsgBoxResult
-        If Not automode Or cmdLineArgs.Length > 10 Then
-            Return MsgBox(msg, Style, Title)
+        If automode Then
+            If cmdLineArgs.Length > arg.logFile Then
+                logFile.WriteLine(DateTime.Now & " " & msg)
+            End If
+        Else
+                Return MsgBox(msg, Style, Title)
         End If
     End Function
 End Class
