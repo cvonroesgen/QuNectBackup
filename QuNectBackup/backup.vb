@@ -236,6 +236,7 @@ Public Class backup
             Using quNectConn As New OdbcConnection(connectionString)
                 quNectConn.Open()
                 Dim ver As String = quNectConn.ServerVersion
+                Me.Text = Title & " " & myBuildInfo.FileVersion & " with QuNect ODBC for QuickBase " & ver
                 Dim m As Match = Regex.Match(ver, "\d+\.(\d+)\.(\d+)\.(\d+)")
                 qdbVer.year = CInt(m.Groups(1).Value)
                 qdbVer.major = CInt(m.Groups(2).Value)
