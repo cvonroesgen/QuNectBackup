@@ -230,29 +230,31 @@ Public Class backup
         btnCommandLine.Visible = True
         Try
             Dim connectionString As String = buildConnectionString("")
-            Dim quNectConn As OdbcConnection = New OdbcConnection(connectionString)
-            quNectConn.Open()
-            Dim ver As String = quNectConn.ServerVersion
-            Dim m As Match = Regex.Match(ver, "\d+\.(\d+)\.(\d+)\.(\d+)")
-            qdbVer.year = CInt(m.Groups(1).Value)
-            qdbVer.major = CInt(m.Groups(2).Value)
-            qdbVer.minor = CInt(m.Groups(3).Value)
-            If qdbVer.year < yearForAllFileURLs Then
-                cmbAttachments.Items(3) = "Please upgrade to latest version of QuNect ODBC for QuickBase to list all file URLs"
-            End If
 
-            If qdbVer.year < 17 Then
-                PopUpMsgBox("You are running the 20" & qdbVer.year & " version of QuNect ODBC for QuickBase. Please install the latest version from https://qunect.com/download/QuNect.exe", MsgBoxStyle.OkOnly, AppName)
-                quNectConn.Dispose()
+            Using quNectConn As New OdbcConnection(connectionString)
+                quNectConn.Open()
+                Dim ver As String = quNectConn.ServerVersion
+                Dim m As Match = Regex.Match(ver, "\d+\.(\d+)\.(\d+)\.(\d+)")
+                qdbVer.year = CInt(m.Groups(1).Value)
+                qdbVer.major = CInt(m.Groups(2).Value)
+                qdbVer.minor = CInt(m.Groups(3).Value)
+                If qdbVer.year < yearForAllFileURLs Then
+                    cmbAttachments.Items(3) = "Please upgrade to latest version of QuNect ODBC for QuickBase to list all file URLs"
+                End If
+
+                If qdbVer.year < 17 Then
+                    PopUpMsgBox("You are running the 20" & qdbVer.year & " version of QuNect ODBC for QuickBase. Please install the latest version from https://qunect.com/download/QuNect.exe", MsgBoxStyle.OkOnly, AppName)
+                    quNectConn.Dispose()
+                    Me.Cursor = Cursors.Default
+                    Exit Sub
+                End If
+
+                Dim tableOfTables As DataTable = quNectConn.GetSchema("Tables")
+                listTablesFromGetSchema(tableOfTables, dbids)
                 Me.Cursor = Cursors.Default
-                Exit Sub
-            End If
-
-            Dim tableOfTables As DataTable = quNectConn.GetSchema("Tables")
-            listTablesFromGetSchema(tableOfTables, dbids)
-            Me.Cursor = Cursors.Default
-            quNectConn.Close()
-            quNectConn.Dispose()
+                quNectConn.Close()
+                quNectConn.Dispose()
+            End Using
         Catch excpt As Exception
             Me.Cursor = Cursors.Default
             If excpt.Message.Contains("Data source name not found") Then
@@ -518,52 +520,53 @@ Public Class backup
         Me.Cursor = Cursors.WaitCursor
         Dim connectionString As String = buildConnectionString("")
 
-        Dim quNectConn As OdbcConnection = New OdbcConnection(connectionString)
-        Try
-            quNectConn.Open()
-        Catch excpt As Exception
-            If Not automode Then
-                PopUpMsgBox(excpt.Message(), MsgBoxStyle.OkOnly, AppName)
-            End If
-            quNectConn.Dispose()
-            Me.Cursor = Cursors.Default
-            Exit Sub
-        End Try
         Dim backupCounter As Integer = 0
-        Dim currentApplication As String = ""
-        For i = 0 To lstBackup.Items.Count - 1
-            If Not automode Then
-                lblProgress.Text = ""
-                lstBackup.SelectedIndex = i
-            End If
-            Dim dbName As String = lstBackup.Items(i).ToString()
-            Dim dbid As String = dbName.Substring(dbName.LastIndexOf(" ") + 1)
-            If ckbAppFolders.Checked AndAlso dbidToAppName.ContainsKey(dbid) AndAlso dbidToAppName.Item(dbid) <> currentApplication Then
-                currentApplication = dbidToAppName.Item(dbid)
-                connectionString = buildConnectionString(dbidToAppName(dbid))
-                quNectConn.Close()
-                quNectConn = New OdbcConnection(connectionString)
-                Try
-                    quNectConn.Open()
-                Catch excpt As Exception
+        Using quNectConn As New OdbcConnection(connectionString)
+            Try
+                quNectConn.Open()
+
+                Dim currentApplication As String = ""
+                For i = 0 To lstBackup.Items.Count - 1
                     If Not automode Then
-                        PopUpMsgBox(excpt.Message(), MsgBoxStyle.OkOnly, AppName)
+                        lblProgress.Text = ""
+                        lstBackup.SelectedIndex = i
                     End If
-                    quNectConn.Dispose()
-                    Me.Cursor = Cursors.Default
-                    Exit Sub
-                End Try
-            End If
-            Dim successFailure As backupResult = backupTable(dbName, dbid, quNectConn)
-            If successFailure.okayCancel = DialogResult.Cancel Then
-                Exit For
-            End If
-            If successFailure.result Then
-                backupCounter += 1
-            End If
-        Next
-        quNectConn.Close()
-        quNectConn.Dispose()
+                    Dim dbName As String = lstBackup.Items(i).ToString()
+                    Dim dbid As String = dbName.Substring(dbName.LastIndexOf(" ") + 1)
+                    If ckbAppFolders.Checked AndAlso dbidToAppName.ContainsKey(dbid) AndAlso dbidToAppName.Item(dbid) <> currentApplication Then
+                        currentApplication = dbidToAppName.Item(dbid)
+                        connectionString = buildConnectionString(dbidToAppName(dbid))
+                        quNectConn.Close()
+                        Try
+                            quNectConn.Open()
+                        Catch excpt As Exception
+                            If Not automode Then
+                                PopUpMsgBox(excpt.Message(), MsgBoxStyle.OkOnly, AppName)
+                            End If
+                            quNectConn.Dispose()
+                            Me.Cursor = Cursors.Default
+                            Exit Sub
+                        End Try
+                    End If
+                    Dim successFailure As backupResult = backupTable(dbName, dbid, quNectConn)
+                    If successFailure.okayCancel = DialogResult.Cancel Then
+                        Exit For
+                    End If
+                    If successFailure.result Then
+                        backupCounter += 1
+                    End If
+                Next
+                quNectConn.Close()
+                quNectConn.Dispose()
+            Catch excpt As Exception
+                If Not automode Then
+                    PopUpMsgBox(excpt.Message(), MsgBoxStyle.OkOnly, AppName)
+                End If
+                quNectConn.Dispose()
+                Me.Cursor = Cursors.Default
+                Exit Sub
+            End Try
+        End Using
         Me.Cursor = Cursors.Default
         If Not automode Then
             If lstBackup.Items.Count = 1 And backupCounter = 1 Then
@@ -587,231 +590,201 @@ Public Class backup
         backupTable.okayCancel = DialogResult.OK
         backupTable.result = True
         Dim quickBaseSQL As String = "Select count(1) from """ & dbid & """"
-
-        Dim quNectCmd As OdbcCommand = Nothing
+        Dim catchErrorMessage = "Could Not Get record count For table " & dbid
         Dim dr As OdbcDataReader
-        Try
-            quNectCmd = New OdbcCommand(quickBaseSQL, quNectConn)
-            dr = quNectCmd.ExecuteReader()
-        Catch excpt As Exception
-            If Not automode Then
-                backupTable.okayCancel = PopUpMsgBox("Could Not Get record count For table " & dbid & " because " & excpt.Message() & vbCrLf & "Would you Like To Continue?", MsgBoxStyle.OkCancel, AppName)
-                backupTable.result = False
-            End If
+        Using quNectCmd As New OdbcCommand(quickBaseSQL, quNectConn)
+            Try
+                dr = quNectCmd.ExecuteReader()
+                If Not dr.HasRows Then
+                    backupTable.okayCancel = PopUpMsgBox("Could Not Get record count For table " & dbid & " perhaps because either the report's, criteria, sort order or columns refer to fields you do not have access to." & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
+                    backupTable.result = False
+                    Exit Function
+                End If
+                Dim recordCount As Integer = dr.GetValue(0)
+                quickBaseSQL = "select fid, field_type, formula, mode, label from """ & dbid & "~fields"""
+                catchErrorMessage = "Could not get field identifiers and types for table " & dbid
 
-            If quNectCmd IsNot Nothing Then
-                quNectCmd.Dispose()
-            End If
-            Exit Function
-        End Try
-        If Not dr.HasRows Then
-            backupTable.okayCancel = PopUpMsgBox("Could Not Get record count For table " & dbid & " perhaps because either the report's, criteria, sort order or columns refer to fields you do not have access to." & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
-            backupTable.result = False
-            Exit Function
-        End If
+                quNectCmd.CommandText = quickBaseSQL
+                If Not dr.IsClosed Then
+                    dr.Close()
+                End If
+                dr = quNectCmd.ExecuteReader()
 
-        Dim recordCount As Integer = dr.GetValue(0)
-        quNectCmd.Dispose()
+                If Not dr.HasRows Then
+                    dr.Close()
+                    dr.Dispose()
+                    Exit Function
+                End If
 
-        quickBaseSQL = "select fid, field_type, formula, mode, label from """ & dbid & "~fields"""
-        Try
-            quNectCmd = New OdbcCommand(quickBaseSQL, quNectConn)
-            dr = quNectCmd.ExecuteReader()
-        Catch excpt As Exception
-            If Not automode Then
-                backupTable.okayCancel = PopUpMsgBox("Could not get field identifiers and types for table " & dbid & " because " & excpt.Message() & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
-                backupTable.result = False
-            End If
-            quNectCmd.Dispose()
-            Exit Function
-        End Try
-        If Not dr.HasRows Then
-            Exit Function
-        End If
-
-
-
-
-        Dim i
-        Dim clist As String = ""
-        Dim fieldTypes As String = ""
-        Dim period As String = ""
-        While (dr.Read())
-            Dim label As String = dr.GetString(4)
-            Dim mode As String = dr.GetString(3)
-            Dim formula As String = dr.GetString(2)
-            Dim field_type As String = dr.GetString(1)
-            If (field_type = "url" Or field_type = "dblink") And mode = "virtual" And Not formula.Contains("/AmazonS3/download.aspx?") Then
-                Continue While
-            End If
-            clist &= period & dr.GetString(0)
-            fieldTypes &= period & field_type
-            period = "."
-        End While
-        quNectCmd.Dispose()
-
-        Dim folderPath As String = txtBackupFolder.Text
-        If ckbDateFolders.Checked Then
-            folderPath &= "\" & DateTime.Now.ToString("yyyy-MM-dd")
-            Directory.CreateDirectory(folderPath)
-        End If
-        If ckbAppFolders.Checked Then
-            Dim dbidWithoutQID As String = Regex.Replace(dbid, "~-?\d+", "")
-            folderPath &= "\" & makeFileNameCompatible(dbidToAppName(dbidWithoutQID))
-            Directory.CreateDirectory(folderPath)
-        End If
-        Dim filenamePrefix As String = dbName
-        If ckbAppFolders.Checked Then
-            filenamePrefix = Regex.Replace(filenamePrefix, "\A[^\\]+\\", "")
-        End If
-        filenamePrefix = makeFileNameCompatible(filenamePrefix)
-
-        If filenamePrefix.Length > 229 Then
-            filenamePrefix = filenamePrefix.Substring(filenamePrefix.Length - 229)
-        End If
-        Dim filepath As String = folderPath & "\" & filenamePrefix & ".fids"
-        Dim objWriter As System.IO.StreamWriter
-        Try
-            objWriter = New System.IO.StreamWriter(filepath)
-        Catch excpt As Exception
-            If Not automode Then
-                backupTable.okayCancel = PopUpMsgBox("Could not open file " & filepath & " because " & excpt.Message() & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
-                backupTable.result = False
-            End If
-            Exit Function
-        End Try
-        objWriter.Write(clist & vbCrLf & fieldTypes)
-        objWriter.Close()
-
-        'here we need to open a file
-        'filename prefix can only be 229 characters in length
-        quickBaseSQL = "select * from """ & dbid & """"
-
-
-
-        Try
-            quNectCmd = New OdbcCommand(quickBaseSQL, quNectConn)
-            dr = quNectCmd.ExecuteReader()
-        Catch excpt As Exception
-            If Not automode Then
-                backupTable.okayCancel = PopUpMsgBox("Could not backup table " & filenamePrefix & " because " & excpt.Message() & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
-                backupTable.result = False
-            End If
-            quNectCmd.Dispose()
-            Exit Function
-        End Try
-        If Not dr.HasRows Then
-            Exit Function
-        End If
-
-        filepath = folderPath & "\" & filenamePrefix & ".csv"
-        Try
-            objWriter = New System.IO.StreamWriter(filepath)
-        Catch excpt As Exception
-            If Not automode Then
-                backupTable.okayCancel = PopUpMsgBox("Could not open file " & filepath & " because " & excpt.Message() & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
-                backupTable.result = False
-            End If
-            Exit Function
-        End Try
-        Dim comma As String = ""
-        For i = 0 To dr.FieldCount - 1
-            objWriter.Write(comma & """")
-            objWriter.Write(Replace(CStr(dr.GetName(i)), """", """"""))
-            objWriter.Write("""")
-            comma = ","
-        Next
-
-        objWriter.Write(vbCrLf)
-        Dim k As Integer = 0
-        pb.Visible = True
-        pb.Maximum = recordCount
-        While (dr.Read())
-            pb.Value = Math.Min(k, recordCount)
-            lblProgress.Text = "Backing up " & k & " of " & recordCount
-            Application.DoEvents()
-            k += 1
-            comma = ""
-            For i = 0 To dr.FieldCount - 1
-                Try
-                    If dr.GetValue(i) Is Nothing Or IsDBNull(dr.GetValue(i)) Then
-                        objWriter.Write(comma)
-                        comma = ","
-                        Continue For
+                Dim i
+                Dim clist As String = ""
+                Dim fieldTypes As String = ""
+                Dim period As String = ""
+                While (dr.Read())
+                    Dim label As String = dr.GetString(4)
+                    Dim mode As String = dr.GetString(3)
+                    Dim formula As String = dr.GetString(2)
+                    Dim field_type As String = dr.GetString(1)
+                    If (field_type = "url" Or field_type = "dblink") And mode = "virtual" And Not formula.Contains("/AmazonS3/download.aspx?") Then
+                        Continue While
                     End If
-                Catch ex As Exception
-                    PopUpMsgBox("Could not process the column '" & columns.Rows(i).Item("COLUMN_NAME") & "' in Record ID# " & dr.GetValue(2) & " because " & ex.Message() & vbCrLf & "Most often this is a phone number in a reference field. Please address this data issue and try again. Your backup of '" & dbName & "' is incomplete.", MsgBoxStyle.OkOnly, AppName)
+                    clist &= period & dr.GetString(0)
+                    fieldTypes &= period & field_type
+                    period = "."
+                End While
+                dr.Close()
+                dr.Dispose()
+
+                Dim folderPath As String = txtBackupFolder.Text
+                If ckbDateFolders.Checked Then
+                    folderPath &= "\" & DateTime.Now.ToString("yyyy-MM-dd")
+                    Directory.CreateDirectory(folderPath)
+                End If
+                If ckbAppFolders.Checked Then
+                    Dim dbidWithoutQID As String = Regex.Replace(dbid, "~-?\d+", "")
+                    folderPath &= "\" & makeFileNameCompatible(dbidToAppName(dbidWithoutQID))
+                    Directory.CreateDirectory(folderPath)
+                End If
+                Dim filenamePrefix As String = dbName
+                If ckbAppFolders.Checked Then
+                    filenamePrefix = Regex.Replace(filenamePrefix, "\A[^\\]+\\", "")
+                End If
+                filenamePrefix = makeFileNameCompatible(filenamePrefix)
+
+                If filenamePrefix.Length > 229 Then
+                    filenamePrefix = filenamePrefix.Substring(filenamePrefix.Length - 229)
+                End If
+                Dim filepath As String = folderPath & "\" & filenamePrefix & ".fids"
+                Try
+                    Using objWriter As New System.IO.StreamWriter(filepath)
+                        objWriter.Write(clist & vbCrLf & fieldTypes)
+                        objWriter.Close()
+                        objWriter.Dispose()
+                    End Using
+                Catch excpt As Exception
+                    If Not automode Then
+                        backupTable.okayCancel = PopUpMsgBox("Could not open file " & filepath & " because " & excpt.Message() & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
+                        backupTable.result = False
+                    End If
+                    Exit Function
+                End Try
+                'here we need to open a file
+                'filename prefix can only be 229 characters in length
+                quickBaseSQL = "select * from """ & dbid & """"
+
+                catchErrorMessage = "Could not backup table " & filenamePrefix & " because "
+                quNectCmd.CommandText = quickBaseSQL
+                If Not dr.IsClosed Then
+                    dr.Close()
+                End If
+                dr = quNectCmd.ExecuteReader()
+
+                If Not dr.HasRows Then
+                    dr.Close()
+                    dr.Dispose()
+                    Exit Function
+                End If
+
+                filepath = folderPath & "\" & filenamePrefix & ".csv"
+
+                Using objWriter As New System.IO.StreamWriter(filepath)
+                    Dim comma As String = ""
+                    For i = 0 To dr.FieldCount - 1
+                        objWriter.Write("""")
+                        objWriter.Write(Replace(CStr(dr.GetName(i)), """", """"""))
+                        objWriter.Write("""")
+                        comma = ","
+                    Next
+
+                    objWriter.Write(vbCrLf)
+                    Dim k As Integer = 0
+                    pb.Visible = True
+                    pb.Maximum = recordCount
+                    While (dr.Read())
+                        pb.Value = Math.Min(k, recordCount)
+                        lblProgress.Text = "Backing up " & k & " of " & recordCount
+                        Application.DoEvents()
+                        k += 1
+                        For i = 0 To dr.FieldCount - 1
+                            If dr.GetValue(i) Is Nothing Or IsDBNull(dr.GetValue(i)) Then
+                                objWriter.Write(",")
+                            Else
+                                Dim strCell As String = dr.GetValue(i).ToString()
+                                Try
+                                    If Not (IsDBNull(columns.Rows(i).Item("REMARKS"))) And (cmbAttachments.SelectedIndex >= 1) And (strCell.Length > 0) And columns.Rows(i).Item("REMARKS").StartsWith("Formula URL") Then
+                                        Dim remarks As String = columns.Rows(i).Item("REMARKS")
+                                        'here we need to fetch the file that is pointed to
+                                        Using wc As New WebClient
+                                            Using rawStream As Stream = wc.OpenRead(strCell)
+                                                Dim fileName As String = String.Empty
+                                                Dim contentDisposition As String = wc.ResponseHeaders("content-disposition")
+                                                If Not String.IsNullOrEmpty(contentDisposition) Then
+                                                    Dim lookFor As String = "filename="
+                                                    Dim index As Integer = contentDisposition.IndexOf(lookFor, StringComparison.CurrentCultureIgnoreCase)
+                                                    If index >= 0 Then
+                                                        fileName = contentDisposition.Substring(index + lookFor.Length)
+                                                    End If
+                                                    If fileName.Length > 0 Then
+                                                        Dim fileExt As String = ""
+                                                        Dim lastPeriod As Integer = fileName.LastIndexOf(".")
+                                                        If lastPeriod <> -1 Then
+                                                            fileExt = fileName.Substring(lastPeriod + 1)
+                                                        End If
+                                                        Dim filePrefix As String = fileName.Substring(0, fileName.Length() - fileExt.Length() - 1)
+                                                        filePrefix = UrlDecode(filePrefix)
+                                                        'need to get rid of unprintable characters
+                                                        For j As Integer = 0 To filePrefix.Length() - 1
+                                                            If Asc(filePrefix.Chars(j)) < Asc(" ") Then
+                                                                filePrefix = ChangeCharacter(filePrefix, " ", j)
+                                                            End If
+                                                        Next
+                                                        'get the record id and fid
+                                                        Dim fileSuffix As String = "." & dr.GetValue(2).ToString() & "_" & remarks.Substring(remarks.LastIndexOf(" ") + 4) & "_" & "." + fileExt
+                                                        If (filePrefix.Length() + fileSuffix.Length() > 255) Then
+                                                            filePrefix = filePrefix.Remove(255 - fileSuffix.Length())
+                                                        End If
+                                                        Directory.CreateDirectory(folderPath & "\" & dbid)
+                                                        filepath = folderPath & "\" & dbid & "\" & filePrefix + fileSuffix
+
+                                                        Using reader As BinaryReader = New BinaryReader(rawStream)
+                                                            File.WriteAllBytes(filepath, reader.ReadBytes(CInt(wc.ResponseHeaders("content-length"))))
+                                                            reader.Close()
+                                                        End Using
+                                                        strCell = "file:///" + filepath
+                                                    End If
+                                                End If
+                                                rawStream.Close()
+                                            End Using
+                                        End Using
+                                    End If
+                                Catch excpt As Exception
+                                    strCell = "Could not download " & strCell & " because " & excpt.Message
+                                End Try
+                                objWriter.Write(comma & """")
+                                objWriter.Write(Replace(strCell, """", """"""))
+                                objWriter.Write("""")
+                            End If
+                            comma = ","
+                        Next
+                        objWriter.Write(vbCrLf)
+                        comma = ""
+                    End While
                     pb.Visible = False
                     lblProgress.Text = ""
                     objWriter.Close()
-                    dr.Close()
-                    quNectCmd.Dispose()
-                    Exit Function
-                End Try
-                Dim strCell As String = dr.GetValue(i).ToString()
-                    Try
-                        If Not (IsDBNull(columns.Rows(i).Item("REMARKS"))) And (cmbAttachments.SelectedIndex >= 1) And (strCell.Length > 0) And columns.Rows(i).Item("REMARKS").StartsWith("Formula URL") Then
-                            Dim remarks As String = columns.Rows(i).Item("REMARKS")
-                            'here we need to fetch the file that is pointed to
-                            Using wc As New WebClient
-                                Using rawStream As Stream = wc.OpenRead(strCell)
-                                    Dim fileName As String = String.Empty
-                                    Dim contentDisposition As String = wc.ResponseHeaders("content-disposition")
-                                    If Not String.IsNullOrEmpty(contentDisposition) Then
-                                        Dim lookFor As String = "filename="
-                                        Dim index As Integer = contentDisposition.IndexOf(lookFor, StringComparison.CurrentCultureIgnoreCase)
-                                        If index >= 0 Then
-                                            fileName = contentDisposition.Substring(index + lookFor.Length)
-                                        End If
-                                        If fileName.Length > 0 Then
-                                            Dim fileExt As String = ""
-                                            Dim lastPeriod As Integer = fileName.LastIndexOf(".")
-                                            If lastPeriod <> -1 Then
-                                                fileExt = fileName.Substring(lastPeriod + 1)
-                                            End If
-                                            Dim filePrefix As String = fileName.Substring(0, fileName.Length() - fileExt.Length() - 1)
-                                            filePrefix = UrlDecode(filePrefix)
-                                            'need to get rid of unprintable characters
-                                            For j As Integer = 0 To filePrefix.Length() - 1
-                                                If Asc(filePrefix.Chars(j)) < Asc(" ") Then
-                                                    filePrefix = ChangeCharacter(filePrefix, " ", j)
-                                                End If
-                                            Next
-                                            'get the record id and fid
-                                            Dim fileSuffix As String = "." & dr.GetValue(2).ToString() & "_" & remarks.Substring(remarks.LastIndexOf(" ") + 4) & "_" & "." + fileExt
-                                            If (filePrefix.Length() + fileSuffix.Length() > 255) Then
-                                                filePrefix = filePrefix.Remove(255 - fileSuffix.Length())
-                                            End If
-                                            Directory.CreateDirectory(folderPath & "\" & dbid)
-                                            filepath = folderPath & "\" & dbid & "\" & filePrefix + fileSuffix
-
-                                            Using reader As BinaryReader = New BinaryReader(rawStream)
-                                                File.WriteAllBytes(filepath, reader.ReadBytes(CInt(wc.ResponseHeaders("content-length"))))
-                                                reader.Close()
-                                            End Using
-                                            strCell = "file:///" + filepath
-                                        End If
-                                    End If
-                                    rawStream.Close()
-                                End Using
-                            End Using
-                        End If
-                    Catch excpt As Exception
-                        strCell = "Could not download " & strCell & " because " & excpt.Message
-                    End Try
-                objWriter.Write(comma & """")
-                objWriter.Write(Replace(strCell, """", """"""))
-                objWriter.Write("""")
-                comma = ","
-            Next
-            objWriter.Write(vbCrLf)
-            comma = ""
-        End While
-        pb.Visible = False
-        lblProgress.Text = ""
-        objWriter.Close()
-        dr.Close()
-        quNectCmd.Dispose()
+                    objWriter.Dispose()
+                End Using
+                dr.Close()
+                dr.Dispose()
+                quNectCmd.Dispose()
+            Catch excpt As Exception
+                If Not automode Then
+                    backupTable.okayCancel = PopUpMsgBox(catchErrorMessage & " because " & excpt.Message() & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
+                    backupTable.result = False
+                End If
+                Exit Function
+            End Try
+        End Using
     End Function
     Private Function makeFileNameCompatible(fileName As String) As String
         Return fileName.Replace("/", "").Replace("\", "").Replace(":", "").Replace(":", "_").Replace("?", "").Replace("""", "").Replace("<", "").Replace(">", "").Replace("|", "")
@@ -920,8 +893,9 @@ Public Class backup
         Me.Cursor = Cursors.WaitCursor
         Try
             Dim connectionString As String = buildConnectionString("")
-            Dim quNectConn As OdbcConnection = New OdbcConnection(connectionString)
-            quNectConn.Open()
+            Using quNectConn As New OdbcConnection(connectionString)
+                quNectConn.Open()
+            End Using
         Catch excpt As Exception
             Me.Cursor = Cursors.Default
             If excpt.Message.Contains("Data source name not found") Then
