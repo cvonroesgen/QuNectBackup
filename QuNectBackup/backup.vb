@@ -698,7 +698,7 @@ Public Class backup
                         objWriter.Write("""")
                         comma = ","
                     Next
-
+                    comma = ""
                     objWriter.Write(vbCrLf)
                     Dim k As Integer = 0
                     pb.Visible = True
