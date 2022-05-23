@@ -715,7 +715,7 @@ Public Class backup
                 Using objWriter As New System.IO.StreamWriter(filepath)
                     Dim comma As String = ""
                     For i = 0 To dr.FieldCount - 1
-                        objWriter.Write("""")
+                        objWriter.Write(comma & """")
                         objWriter.Write(Replace(CStr(dr.GetName(i)), """", """"""))
                         objWriter.Write("""")
                         comma = ","
