@@ -60,10 +60,15 @@ Partial Class backup
         Me.btnTest = New System.Windows.Forms.Button()
         Me.tabBackup = New System.Windows.Forms.TabPage()
         Me.btnCommandLine = New System.Windows.Forms.Button()
+        Me.ckbOnlyUserEntry = New System.Windows.Forms.CheckBox()
+        Me.lblOnlyModified = New System.Windows.Forms.Label()
+        Me.upDownHours = New System.Windows.Forms.NumericUpDown()
+        Me.lblHours = New System.Windows.Forms.Label()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.tabs.SuspendLayout()
         Me.tabAuth.SuspendLayout()
         Me.tabBackup.SuspendLayout()
+        CType(Me.upDownHours, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'txtUsername
@@ -382,6 +387,10 @@ Partial Class backup
         '
         'tabBackup
         '
+        Me.tabBackup.Controls.Add(Me.lblHours)
+        Me.tabBackup.Controls.Add(Me.upDownHours)
+        Me.tabBackup.Controls.Add(Me.lblOnlyModified)
+        Me.tabBackup.Controls.Add(Me.ckbOnlyUserEntry)
         Me.tabBackup.Controls.Add(Me.btnCommandLine)
         Me.tabBackup.Controls.Add(Me.btnRemove)
         Me.tabBackup.Controls.Add(Me.cmbAttachments)
@@ -418,6 +427,42 @@ Partial Class backup
         Me.btnCommandLine.UseVisualStyleBackColor = True
         Me.btnCommandLine.Visible = False
         '
+        'ckbOnlyUserEntry
+        '
+        Me.ckbOnlyUserEntry.AutoSize = True
+        Me.ckbOnlyUserEntry.Location = New System.Drawing.Point(416, 90)
+        Me.ckbOnlyUserEntry.Name = "ckbOnlyUserEntry"
+        Me.ckbOnlyUserEntry.Size = New System.Drawing.Size(177, 17)
+        Me.ckbOnlyUserEntry.TabIndex = 30
+        Me.ckbOnlyUserEntry.Text = "Only built-in and user entry fields"
+        Me.ckbOnlyUserEntry.UseVisualStyleBackColor = True
+        '
+        'lblOnlyModified
+        '
+        Me.lblOnlyModified.AutoSize = True
+        Me.lblOnlyModified.Location = New System.Drawing.Point(591, 91)
+        Me.lblOnlyModified.Name = "lblOnlyModified"
+        Me.lblOnlyModified.Size = New System.Drawing.Size(156, 13)
+        Me.lblOnlyModified.TabIndex = 32
+        Me.lblOnlyModified.Text = "Only records modified in the last"
+        '
+        'upDownHours
+        '
+        Me.upDownHours.Location = New System.Drawing.Point(746, 85)
+        Me.upDownHours.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
+        Me.upDownHours.Name = "upDownHours"
+        Me.upDownHours.Size = New System.Drawing.Size(38, 20)
+        Me.upDownHours.TabIndex = 33
+        '
+        'lblHours
+        '
+        Me.lblHours.AutoSize = True
+        Me.lblHours.Location = New System.Drawing.Point(786, 90)
+        Me.lblHours.Name = "lblHours"
+        Me.lblHours.Size = New System.Drawing.Size(33, 13)
+        Me.lblHours.TabIndex = 34
+        Me.lblHours.Text = "hours"
+        '
         'backup
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -433,6 +478,7 @@ Partial Class backup
         Me.tabAuth.PerformLayout()
         Me.tabBackup.ResumeLayout(False)
         Me.tabBackup.PerformLayout()
+        CType(Me.upDownHours, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -472,4 +518,8 @@ Partial Class backup
     Friend WithEvents tabBackup As TabPage
     Friend WithEvents btnTest As Button
     Friend WithEvents btnCommandLine As Button
+    Friend WithEvents lblHours As Label
+    Friend WithEvents upDownHours As NumericUpDown
+    Friend WithEvents lblOnlyModified As Label
+    Friend WithEvents ckbOnlyUserEntry As CheckBox
 End Class

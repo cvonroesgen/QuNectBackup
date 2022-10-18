@@ -5,8 +5,9 @@ Imports System.Text
 Imports System.Data.Odbc
 Imports System.Text.RegularExpressions
 Imports System.Configuration
-
-
+Imports System.Web.UI
+Imports System.Collections.Concurrent
+Imports System.Web.ApplicationServices
 
 Public Class backup
 
@@ -41,6 +42,7 @@ Public Class backup
         appFolders = 8
         attachments = 9
         logFile = 10
+        options = 11
     End Enum
     Private logFile As StreamWriter
     Enum PasswordOrToken
@@ -50,9 +52,6 @@ Public Class backup
     End Enum
     Private qdbVer As qdbVersion = New qdbVersion
 
-    Private Sub backup_Disposed(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Disposed
-
-    End Sub
     Function createDBIDList() As String
         Dim i As Integer
         Dim dbids As String = ""
@@ -101,9 +100,10 @@ Public Class backup
             ckbDetectProxy.Checked = False
         End If
         Dim samlSetting As String = GetSetting(AppName, "Credentials", "samlsetting", "0")
+        Dim optionsSetting As String = GetSetting(AppName, "Credentials", "samlsetting", "0")
 
-
-        txtBackupFolder.Text = GetSetting(AppName, "location", "path")
+        Dim optionSetting As String = GetSetting(AppName, "backup", "options", "hours=0")
+        parseOptionsSetting(optionSetting)
         If appSettings.Settings.Item("location") IsNot Nothing AndAlso appSettings.Settings.Item("location").Value.Length > 0 Then
             txtBackupFolder.Text = appSettings.Settings.Item("location").Value
         Else
@@ -139,6 +139,9 @@ Public Class backup
                 End If
                 cmbAttachments.SelectedIndex = CInt(cmdLineArgs(arg.attachments))
                 cmbPassword.SelectedIndex = PasswordOrToken.token
+            End If
+            If cmdLineArgs.Length > arg.options Then
+                parseOptionsSetting(cmdLineArgs(arg.options))
             End If
             If cmdLineArgs.Length > arg.logFile Then
                 'open log file
@@ -221,6 +224,12 @@ Public Class backup
                 SaveSetting(AppName, "Credentials", "detectproxysettings", "0")
             End If
             SaveSetting(AppName, "Credentials", "passwordOrToken", cmbPassword.SelectedIndex)
+            Dim options As String = ""
+            If ckbOnlyUserEntry.Checked Then
+                options &= "onlyEntryFields,"
+            End If
+            options &= "hours=" & upDownHours.Value
+            SaveSetting(AppName, "backup", "options", options)
             If appSettings.Settings.Item("tables") Is Nothing Then
                 appSettings.Settings.Add("tables", createTableList())
             Else
@@ -615,6 +624,9 @@ Public Class backup
         backupTable.okayCancel = DialogResult.OK
         backupTable.result = True
         Dim quickBaseSQL As String = "Select count(1) from """ & dbid & """"
+        If upDownHours.Value > 0 Then
+            quickBaseSQL &= " WHERE fid2 > {fn TIMESTAMPADD(SQL_TSI_HOUR, -" & upDownHours.Value & ", {fn CURRENT_TIMESTAMP()})}"
+        End If
         Dim catchErrorMessage = "Could Not Get record count For table " & dbid
         Dim dr As OdbcDataReader
         Using quNectCmd As New OdbcCommand(quickBaseSQL, quNectConn)
@@ -627,6 +639,9 @@ Public Class backup
                 End If
                 Dim recordCount As Integer = dr.GetValue(0)
                 quickBaseSQL = "select fid, field_type, formula, mode, label from """ & dbid & "~fields"""
+                If ckbOnlyUserEntry.Checked Then
+                    quickBaseSQL &= " WHERE mode = '' OR role <> ''"
+                End If
                 catchErrorMessage = "Could not get field identifiers and types for table " & dbid
 
                 quNectCmd.CommandText = quickBaseSQL
@@ -645,6 +660,8 @@ Public Class backup
                 Dim clist As String = ""
                 Dim fieldTypes As String = ""
                 Dim period As String = ""
+                Dim comma As String = ""
+                Dim selectList As String = ""
                 While (dr.Read())
                     Dim label As String = dr.GetString(4)
                     Dim mode As String = dr.GetString(3)
@@ -653,9 +670,12 @@ Public Class backup
                     If (field_type = "url" Or field_type = "dblink") And mode = "virtual" And Not formula.Contains("/AmazonS3/download.aspx?") Then
                         Continue While
                     End If
-                    clist &= period & dr.GetString(0)
+                    Dim fid As String = dr.GetString(0)
+                    clist &= period & fid
                     fieldTypes &= period & field_type
+                    selectList &= comma & """" & label & """"
                     period = "."
+                    comma = ","
                 End While
                 dr.Close()
                 dr.Dispose()
@@ -695,8 +715,10 @@ Public Class backup
                 End Try
                 'here we need to open a file
                 'filename prefix can only be 229 characters in length
-                quickBaseSQL = "select * from """ & dbid & """"
-
+                quickBaseSQL = "select " & selectList & " from """ & dbid & """"
+                If upDownHours.Value > 0 Then
+                    quickBaseSQL &= " WHERE fid2 > {fn TIMESTAMPADD(SQL_TSI_HOUR, -" & upDownHours.Value & ", {fn CURRENT_TIMESTAMP()})}"
+                End If
                 catchErrorMessage = "Could not backup table " & filenamePrefix & " because "
                 quNectCmd.CommandText = quickBaseSQL
                 If Not dr.IsClosed Then
@@ -713,7 +735,7 @@ Public Class backup
                 filepath = folderPath & "\" & filenamePrefix & ".csv"
 
                 Using objWriter As New System.IO.StreamWriter(filepath)
-                    Dim comma As String = ""
+                    comma = ""
                     For i = 0 To dr.FieldCount - 1
                         objWriter.Write(comma & """")
                         objWriter.Write(Replace(CStr(dr.GetName(i)), """", """"""))
@@ -988,6 +1010,11 @@ Public Class backup
             arguments &= " ""0"""
         End If
         arguments &= " """ & cmbAttachments.SelectedIndex & """"
+        arguments &= " hours=" & upDownHours.Value
+        If ckbOnlyUserEntry.Checked Then
+            arguments &= ",onlyEntryFields,"
+        End If
+
 
         frmCommandLine.txtArguments.Text = arguments
         frmCommandLine.txtProgramScript.Text = programScript
@@ -1011,6 +1038,27 @@ Public Class backup
                 Return MsgBox(msg, Style, Title)
         End If
     End Function
+    Sub parseOptionsSetting(options As String)
+        If Regex.IsMatch(options, "onlyEntryFields", RegexOptions.IgnoreCase) Then
+            ckbOnlyUserEntry.Checked = True
+        Else
+            ckbOnlyUserEntry.Checked = False
+        End If
+        Dim m As Match = Regex.Match(options, "hours=(\d+)", RegexOptions.IgnoreCase)
+        If m.Success Then
+            upDownHours.Value = m.Groups(1).Value
+        Else
+            upDownHours.Value = 0
+        End If
+    End Sub
+
+    Private Sub ckbOnlyUserEntry_CheckStateChanged(sender As Object, e As EventArgs) Handles ckbOnlyUserEntry.CheckStateChanged
+        SaveSettings()
+    End Sub
+
+    Private Sub upDownHours_TextChanged(sender As Object, e As EventArgs) Handles upDownHours.TextChanged
+        SaveSettings()
+    End Sub
 End Class
 
 
