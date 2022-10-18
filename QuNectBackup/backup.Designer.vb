@@ -31,44 +31,48 @@ Partial Class backup
         Me.txtServer = New System.Windows.Forms.TextBox()
         Me.lblAppToken = New System.Windows.Forms.Label()
         Me.txtAppToken = New System.Windows.Forms.TextBox()
-        Me.tvAppsTables = New System.Windows.Forms.TreeView()
         Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.RetrieveTheTableReportsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.btnListTables = New System.Windows.Forms.Button()
-        Me.btnFolder = New System.Windows.Forms.Button()
-        Me.lblBackupFolder = New System.Windows.Forms.Label()
-        Me.lstBackup = New System.Windows.Forms.ListBox()
-        Me.btnAddToBackupList = New System.Windows.Forms.Button()
-        Me.btnBackup = New System.Windows.Forms.Button()
-        Me.lblAttachments = New System.Windows.Forms.Label()
-        Me.cmbAttachments = New System.Windows.Forms.ComboBox()
-        Me.txtBackupFolder = New System.Windows.Forms.TextBox()
-        Me.btnRemove = New System.Windows.Forms.Button()
-        Me.lblBackup = New System.Windows.Forms.Label()
-        Me.lblTables = New System.Windows.Forms.Label()
-        Me.ckbDateFolders = New System.Windows.Forms.CheckBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.pb = New System.Windows.Forms.ProgressBar()
+        Me.btnRemove = New System.Windows.Forms.Button()
+        Me.btnAddToBackupList = New System.Windows.Forms.Button()
         Me.ckbDetectProxy = New System.Windows.Forms.CheckBox()
-        Me.lblProgress = New System.Windows.Forms.Label()
-        Me.ckbAppFolders = New System.Windows.Forms.CheckBox()
         Me.cmbPassword = New System.Windows.Forms.ComboBox()
         Me.btnAppToken = New System.Windows.Forms.Button()
         Me.btnUserToken = New System.Windows.Forms.Button()
         Me.tabs = New System.Windows.Forms.TabControl()
         Me.tabAuth = New System.Windows.Forms.TabPage()
         Me.btnTest = New System.Windows.Forms.Button()
-        Me.tabBackup = New System.Windows.Forms.TabPage()
-        Me.btnCommandLine = New System.Windows.Forms.Button()
-        Me.ckbOnlyUserEntry = New System.Windows.Forms.CheckBox()
-        Me.lblOnlyModified = New System.Windows.Forms.Label()
-        Me.upDownHours = New System.Windows.Forms.NumericUpDown()
+        Me.tabOptions = New System.Windows.Forms.TabPage()
         Me.lblHours = New System.Windows.Forms.Label()
+        Me.upDownHours = New System.Windows.Forms.NumericUpDown()
+        Me.txtBackupFolder = New System.Windows.Forms.TextBox()
+        Me.btnFolder = New System.Windows.Forms.Button()
+        Me.lblBackupFolder = New System.Windows.Forms.Label()
+        Me.ckbDateFolders = New System.Windows.Forms.CheckBox()
+        Me.lblAttachments = New System.Windows.Forms.Label()
+        Me.lblOnlyModified = New System.Windows.Forms.Label()
+        Me.ckbOnlyUserEntry = New System.Windows.Forms.CheckBox()
+        Me.cmbAttachments = New System.Windows.Forms.ComboBox()
+        Me.ckbAppFolders = New System.Windows.Forms.CheckBox()
+        Me.tabTables = New System.Windows.Forms.TabPage()
+        Me.tvAppsTables = New System.Windows.Forms.TreeView()
+        Me.btnListTables = New System.Windows.Forms.Button()
+        Me.lstBackup = New System.Windows.Forms.ListBox()
+        Me.lblTables = New System.Windows.Forms.Label()
+        Me.lblBackup = New System.Windows.Forms.Label()
+        Me.tabBackup = New System.Windows.Forms.TabPage()
+        Me.lblProgress = New System.Windows.Forms.Label()
+        Me.btnCommandLine = New System.Windows.Forms.Button()
+        Me.pb = New System.Windows.Forms.ProgressBar()
+        Me.btnBackup = New System.Windows.Forms.Button()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.tabs.SuspendLayout()
         Me.tabAuth.SuspendLayout()
-        Me.tabBackup.SuspendLayout()
+        Me.tabOptions.SuspendLayout()
         CType(Me.upDownHours, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.tabTables.SuspendLayout()
+        Me.tabBackup.SuspendLayout()
         Me.SuspendLayout()
         '
         'txtUsername
@@ -128,16 +132,6 @@ Partial Class backup
         Me.txtAppToken.Size = New System.Drawing.Size(258, 20)
         Me.txtAppToken.TabIndex = 6
         '
-        'tvAppsTables
-        '
-        Me.tvAppsTables.AllowDrop = True
-        Me.tvAppsTables.ContextMenuStrip = Me.ContextMenuStrip1
-        Me.tvAppsTables.Location = New System.Drawing.Point(5, 137)
-        Me.tvAppsTables.Name = "tvAppsTables"
-        Me.tvAppsTables.Size = New System.Drawing.Size(369, 577)
-        Me.tvAppsTables.TabIndex = 8
-        Me.tvAppsTables.Visible = False
-        '
         'ContextMenuStrip1
         '
         Me.ContextMenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RetrieveTheTableReportsToolStripMenuItem})
@@ -150,142 +144,29 @@ Partial Class backup
         Me.RetrieveTheTableReportsToolStripMenuItem.Size = New System.Drawing.Size(354, 22)
         Me.RetrieveTheTableReportsToolStripMenuItem.Text = "Retrieve the table reports for the selected application."
         '
-        'btnListTables
-        '
-        Me.btnListTables.Location = New System.Drawing.Point(194, 108)
-        Me.btnListTables.Name = "btnListTables"
-        Me.btnListTables.Size = New System.Drawing.Size(76, 23)
-        Me.btnListTables.TabIndex = 9
-        Me.btnListTables.Text = "List Tables"
-        Me.btnListTables.UseVisualStyleBackColor = True
-        '
-        'btnFolder
-        '
-        Me.btnFolder.Location = New System.Drawing.Point(782, 27)
-        Me.btnFolder.Name = "btnFolder"
-        Me.btnFolder.Size = New System.Drawing.Size(28, 23)
-        Me.btnFolder.TabIndex = 10
-        Me.btnFolder.Text = "..."
-        Me.btnFolder.UseVisualStyleBackColor = True
-        '
-        'lblBackupFolder
-        '
-        Me.lblBackupFolder.AutoSize = True
-        Me.lblBackupFolder.Location = New System.Drawing.Point(269, 8)
-        Me.lblBackupFolder.Name = "lblBackupFolder"
-        Me.lblBackupFolder.Size = New System.Drawing.Size(104, 13)
-        Me.lblBackupFolder.TabIndex = 11
-        Me.lblBackupFolder.Text = "Folder to Backup To"
-        '
-        'lstBackup
-        '
-        Me.lstBackup.AllowDrop = True
-        Me.lstBackup.FormattingEnabled = True
-        Me.lstBackup.Location = New System.Drawing.Point(417, 138)
-        Me.lstBackup.Name = "lstBackup"
-        Me.lstBackup.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
-        Me.lstBackup.Size = New System.Drawing.Size(397, 576)
-        Me.lstBackup.TabIndex = 12
-        Me.lstBackup.Visible = False
-        '
-        'btnAddToBackupList
-        '
-        Me.btnAddToBackupList.Location = New System.Drawing.Point(380, 334)
-        Me.btnAddToBackupList.Name = "btnAddToBackupList"
-        Me.btnAddToBackupList.Size = New System.Drawing.Size(31, 24)
-        Me.btnAddToBackupList.TabIndex = 13
-        Me.btnAddToBackupList.Text = "->"
-        Me.ToolTip1.SetToolTip(Me.btnAddToBackupList, "Hold down the shift key and click me to move over all tables, without the shift k" &
-        "ey I add one table per click.")
-        Me.btnAddToBackupList.UseVisualStyleBackColor = True
-        Me.btnAddToBackupList.Visible = False
-        '
-        'btnBackup
-        '
-        Me.btnBackup.Location = New System.Drawing.Point(543, 109)
-        Me.btnBackup.Name = "btnBackup"
-        Me.btnBackup.Size = New System.Drawing.Size(83, 23)
-        Me.btnBackup.TabIndex = 14
-        Me.btnBackup.Text = "Backup"
-        Me.btnBackup.UseVisualStyleBackColor = True
-        Me.btnBackup.Visible = False
-        '
-        'lblAttachments
-        '
-        Me.lblAttachments.AutoSize = True
-        Me.lblAttachments.Location = New System.Drawing.Point(10, 9)
-        Me.lblAttachments.Name = "lblAttachments"
-        Me.lblAttachments.Size = New System.Drawing.Size(85, 13)
-        Me.lblAttachments.TabIndex = 15
-        Me.lblAttachments.Text = "File Attachments"
-        '
-        'cmbAttachments
-        '
-        Me.cmbAttachments.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbAttachments.FormattingEnabled = True
-        Me.cmbAttachments.Items.AddRange(New Object() {"Do not download", "Download current revision and list file URL", "Download all revisions and current rev file URL", "Download all revisions and all file URLs"})
-        Me.cmbAttachments.Location = New System.Drawing.Point(6, 27)
-        Me.cmbAttachments.Name = "cmbAttachments"
-        Me.cmbAttachments.Size = New System.Drawing.Size(238, 21)
-        Me.cmbAttachments.TabIndex = 16
-        '
-        'txtBackupFolder
-        '
-        Me.txtBackupFolder.Enabled = False
-        Me.txtBackupFolder.Location = New System.Drawing.Point(263, 27)
-        Me.txtBackupFolder.Name = "txtBackupFolder"
-        Me.txtBackupFolder.Size = New System.Drawing.Size(513, 20)
-        Me.txtBackupFolder.TabIndex = 17
-        '
         'btnRemove
         '
-        Me.btnRemove.Location = New System.Drawing.Point(380, 364)
+        Me.btnRemove.Location = New System.Drawing.Point(380, 265)
         Me.btnRemove.Name = "btnRemove"
         Me.btnRemove.Size = New System.Drawing.Size(31, 24)
-        Me.btnRemove.TabIndex = 18
+        Me.btnRemove.TabIndex = 25
         Me.btnRemove.Text = "<-"
         Me.ToolTip1.SetToolTip(Me.btnRemove, "Hold down the shift key and click me to remove all the tables, without the shift " &
         "key I remove one table per click.")
         Me.btnRemove.UseVisualStyleBackColor = True
         Me.btnRemove.Visible = False
         '
-        'lblBackup
+        'btnAddToBackupList
         '
-        Me.lblBackup.AutoSize = True
-        Me.lblBackup.Location = New System.Drawing.Point(423, 113)
-        Me.lblBackup.Name = "lblBackup"
-        Me.lblBackup.Size = New System.Drawing.Size(91, 13)
-        Me.lblBackup.TabIndex = 19
-        Me.lblBackup.Text = "Tables to Backup"
-        Me.lblBackup.Visible = False
-        '
-        'lblTables
-        '
-        Me.lblTables.AutoSize = True
-        Me.lblTables.Location = New System.Drawing.Point(9, 113)
-        Me.lblTables.Name = "lblTables"
-        Me.lblTables.Size = New System.Drawing.Size(135, 13)
-        Me.lblTables.TabIndex = 20
-        Me.lblTables.Text = "Tables you have access to"
-        '
-        'ckbDateFolders
-        '
-        Me.ckbDateFolders.AutoSize = True
-        Me.ckbDateFolders.Location = New System.Drawing.Point(417, 53)
-        Me.ckbDateFolders.Name = "ckbDateFolders"
-        Me.ckbDateFolders.Size = New System.Drawing.Size(188, 17)
-        Me.ckbDateFolders.TabIndex = 21
-        Me.ckbDateFolders.Text = "Create new subfolder for each day"
-        Me.ckbDateFolders.UseVisualStyleBackColor = True
-        '
-        'pb
-        '
-        Me.pb.Location = New System.Drawing.Point(3, 71)
-        Me.pb.Maximum = 1000
-        Me.pb.Name = "pb"
-        Me.pb.Size = New System.Drawing.Size(371, 23)
-        Me.pb.TabIndex = 22
-        Me.pb.Visible = False
+        Me.btnAddToBackupList.Location = New System.Drawing.Point(380, 235)
+        Me.btnAddToBackupList.Name = "btnAddToBackupList"
+        Me.btnAddToBackupList.Size = New System.Drawing.Size(31, 24)
+        Me.btnAddToBackupList.TabIndex = 24
+        Me.btnAddToBackupList.Text = "->"
+        Me.ToolTip1.SetToolTip(Me.btnAddToBackupList, "Hold down the shift key and click me to move over all tables, without the shift k" &
+        "ey I add one table per click.")
+        Me.btnAddToBackupList.UseVisualStyleBackColor = True
+        Me.btnAddToBackupList.Visible = False
         '
         'ckbDetectProxy
         '
@@ -296,24 +177,6 @@ Partial Class backup
         Me.ckbDetectProxy.TabIndex = 23
         Me.ckbDetectProxy.Text = "Automatically detect proxy settings"
         Me.ckbDetectProxy.UseVisualStyleBackColor = True
-        '
-        'lblProgress
-        '
-        Me.lblProgress.AutoSize = True
-        Me.lblProgress.Location = New System.Drawing.Point(626, 57)
-        Me.lblProgress.Name = "lblProgress"
-        Me.lblProgress.Size = New System.Drawing.Size(0, 13)
-        Me.lblProgress.TabIndex = 25
-        '
-        'ckbAppFolders
-        '
-        Me.ckbAppFolders.AutoSize = True
-        Me.ckbAppFolders.Location = New System.Drawing.Point(417, 72)
-        Me.ckbAppFolders.Name = "ckbAppFolders"
-        Me.ckbAppFolders.Size = New System.Drawing.Size(199, 17)
-        Me.ckbAppFolders.TabIndex = 26
-        Me.ckbAppFolders.Text = "Put each application in its own folder"
-        Me.ckbAppFolders.UseVisualStyleBackColor = True
         '
         'cmbPassword
         '
@@ -346,6 +209,8 @@ Partial Class backup
         'tabs
         '
         Me.tabs.Controls.Add(Me.tabAuth)
+        Me.tabs.Controls.Add(Me.tabOptions)
+        Me.tabs.Controls.Add(Me.tabTables)
         Me.tabs.Controls.Add(Me.tabBackup)
         Me.tabs.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabs.Location = New System.Drawing.Point(0, 0)
@@ -385,30 +250,199 @@ Partial Class backup
         Me.btnTest.Text = "Test Connection"
         Me.btnTest.UseVisualStyleBackColor = True
         '
+        'tabOptions
+        '
+        Me.tabOptions.Controls.Add(Me.lblHours)
+        Me.tabOptions.Controls.Add(Me.upDownHours)
+        Me.tabOptions.Controls.Add(Me.txtBackupFolder)
+        Me.tabOptions.Controls.Add(Me.btnFolder)
+        Me.tabOptions.Controls.Add(Me.lblBackupFolder)
+        Me.tabOptions.Controls.Add(Me.ckbDateFolders)
+        Me.tabOptions.Controls.Add(Me.lblAttachments)
+        Me.tabOptions.Controls.Add(Me.lblOnlyModified)
+        Me.tabOptions.Controls.Add(Me.ckbOnlyUserEntry)
+        Me.tabOptions.Controls.Add(Me.cmbAttachments)
+        Me.tabOptions.Controls.Add(Me.ckbAppFolders)
+        Me.tabOptions.Location = New System.Drawing.Point(4, 22)
+        Me.tabOptions.Name = "tabOptions"
+        Me.tabOptions.Size = New System.Drawing.Size(818, 716)
+        Me.tabOptions.TabIndex = 2
+        Me.tabOptions.Text = "Options"
+        Me.tabOptions.UseVisualStyleBackColor = True
+        '
+        'lblHours
+        '
+        Me.lblHours.AutoSize = True
+        Me.lblHours.Location = New System.Drawing.Point(242, 56)
+        Me.lblHours.Name = "lblHours"
+        Me.lblHours.Size = New System.Drawing.Size(195, 13)
+        Me.lblHours.TabIndex = 46
+        Me.lblHours.Text = "hours. Set to zero to backup all records."
+        '
+        'upDownHours
+        '
+        Me.upDownHours.Location = New System.Drawing.Point(202, 50)
+        Me.upDownHours.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
+        Me.upDownHours.Name = "upDownHours"
+        Me.upDownHours.Size = New System.Drawing.Size(38, 20)
+        Me.upDownHours.TabIndex = 45
+        '
+        'txtBackupFolder
+        '
+        Me.txtBackupFolder.Enabled = False
+        Me.txtBackupFolder.Location = New System.Drawing.Point(263, 25)
+        Me.txtBackupFolder.Name = "txtBackupFolder"
+        Me.txtBackupFolder.Size = New System.Drawing.Size(513, 20)
+        Me.txtBackupFolder.TabIndex = 39
+        '
+        'btnFolder
+        '
+        Me.btnFolder.Location = New System.Drawing.Point(782, 25)
+        Me.btnFolder.Name = "btnFolder"
+        Me.btnFolder.Size = New System.Drawing.Size(28, 23)
+        Me.btnFolder.TabIndex = 35
+        Me.btnFolder.Text = "..."
+        Me.btnFolder.UseVisualStyleBackColor = True
+        '
+        'lblBackupFolder
+        '
+        Me.lblBackupFolder.AutoSize = True
+        Me.lblBackupFolder.Location = New System.Drawing.Point(269, 6)
+        Me.lblBackupFolder.Name = "lblBackupFolder"
+        Me.lblBackupFolder.Size = New System.Drawing.Size(104, 13)
+        Me.lblBackupFolder.TabIndex = 36
+        Me.lblBackupFolder.Text = "Folder to Backup To"
+        '
+        'ckbDateFolders
+        '
+        Me.ckbDateFolders.AutoSize = True
+        Me.ckbDateFolders.Location = New System.Drawing.Point(8, 77)
+        Me.ckbDateFolders.Name = "ckbDateFolders"
+        Me.ckbDateFolders.Size = New System.Drawing.Size(197, 17)
+        Me.ckbDateFolders.TabIndex = 40
+        Me.ckbDateFolders.Text = "Create a new subfolder for each day"
+        Me.ckbDateFolders.UseVisualStyleBackColor = True
+        '
+        'lblAttachments
+        '
+        Me.lblAttachments.AutoSize = True
+        Me.lblAttachments.Location = New System.Drawing.Point(10, 7)
+        Me.lblAttachments.Name = "lblAttachments"
+        Me.lblAttachments.Size = New System.Drawing.Size(85, 13)
+        Me.lblAttachments.TabIndex = 37
+        Me.lblAttachments.Text = "File Attachments"
+        '
+        'lblOnlyModified
+        '
+        Me.lblOnlyModified.AutoSize = True
+        Me.lblOnlyModified.Location = New System.Drawing.Point(6, 56)
+        Me.lblOnlyModified.Name = "lblOnlyModified"
+        Me.lblOnlyModified.Size = New System.Drawing.Size(195, 13)
+        Me.lblOnlyModified.TabIndex = 44
+        Me.lblOnlyModified.Text = "Only backup records modified in the last"
+        '
+        'ckbOnlyUserEntry
+        '
+        Me.ckbOnlyUserEntry.AutoSize = True
+        Me.ckbOnlyUserEntry.Location = New System.Drawing.Point(8, 114)
+        Me.ckbOnlyUserEntry.Name = "ckbOnlyUserEntry"
+        Me.ckbOnlyUserEntry.Size = New System.Drawing.Size(512, 17)
+        Me.ckbOnlyUserEntry.TabIndex = 43
+        Me.ckbOnlyUserEntry.Text = "Backup only the five built-in and user entry fields. Exclude all lookup, summary," &
+    " formula and query fields."
+        Me.ckbOnlyUserEntry.UseVisualStyleBackColor = True
+        '
+        'cmbAttachments
+        '
+        Me.cmbAttachments.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbAttachments.FormattingEnabled = True
+        Me.cmbAttachments.Items.AddRange(New Object() {"Do not download", "Download current revision and list file URL", "Download all revisions and current rev file URL", "Download all revisions and all file URLs"})
+        Me.cmbAttachments.Location = New System.Drawing.Point(6, 25)
+        Me.cmbAttachments.Name = "cmbAttachments"
+        Me.cmbAttachments.Size = New System.Drawing.Size(238, 21)
+        Me.cmbAttachments.TabIndex = 38
+        '
+        'ckbAppFolders
+        '
+        Me.ckbAppFolders.AutoSize = True
+        Me.ckbAppFolders.Location = New System.Drawing.Point(8, 96)
+        Me.ckbAppFolders.Name = "ckbAppFolders"
+        Me.ckbAppFolders.Size = New System.Drawing.Size(199, 17)
+        Me.ckbAppFolders.TabIndex = 42
+        Me.ckbAppFolders.Text = "Put each application in its own folder"
+        Me.ckbAppFolders.UseVisualStyleBackColor = True
+        '
+        'tabTables
+        '
+        Me.tabTables.Controls.Add(Me.btnRemove)
+        Me.tabTables.Controls.Add(Me.btnAddToBackupList)
+        Me.tabTables.Controls.Add(Me.tvAppsTables)
+        Me.tabTables.Controls.Add(Me.btnListTables)
+        Me.tabTables.Controls.Add(Me.lstBackup)
+        Me.tabTables.Controls.Add(Me.lblTables)
+        Me.tabTables.Controls.Add(Me.lblBackup)
+        Me.tabTables.Location = New System.Drawing.Point(4, 22)
+        Me.tabTables.Name = "tabTables"
+        Me.tabTables.Size = New System.Drawing.Size(818, 716)
+        Me.tabTables.TabIndex = 3
+        Me.tabTables.Text = "Tables"
+        Me.tabTables.UseVisualStyleBackColor = True
+        '
+        'tvAppsTables
+        '
+        Me.tvAppsTables.AllowDrop = True
+        Me.tvAppsTables.ContextMenuStrip = Me.ContextMenuStrip1
+        Me.tvAppsTables.Location = New System.Drawing.Point(5, 38)
+        Me.tvAppsTables.Name = "tvAppsTables"
+        Me.tvAppsTables.Size = New System.Drawing.Size(369, 577)
+        Me.tvAppsTables.TabIndex = 21
+        Me.tvAppsTables.Visible = False
+        '
+        'btnListTables
+        '
+        Me.btnListTables.Location = New System.Drawing.Point(194, 9)
+        Me.btnListTables.Name = "btnListTables"
+        Me.btnListTables.Size = New System.Drawing.Size(76, 23)
+        Me.btnListTables.TabIndex = 22
+        Me.btnListTables.Text = "List Tables"
+        Me.btnListTables.UseVisualStyleBackColor = True
+        '
+        'lstBackup
+        '
+        Me.lstBackup.AllowDrop = True
+        Me.lstBackup.FormattingEnabled = True
+        Me.lstBackup.Location = New System.Drawing.Point(417, 39)
+        Me.lstBackup.Name = "lstBackup"
+        Me.lstBackup.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
+        Me.lstBackup.Size = New System.Drawing.Size(397, 576)
+        Me.lstBackup.TabIndex = 23
+        Me.lstBackup.Visible = False
+        '
+        'lblTables
+        '
+        Me.lblTables.AutoSize = True
+        Me.lblTables.Location = New System.Drawing.Point(9, 14)
+        Me.lblTables.Name = "lblTables"
+        Me.lblTables.Size = New System.Drawing.Size(135, 13)
+        Me.lblTables.TabIndex = 27
+        Me.lblTables.Text = "Tables you have access to"
+        '
+        'lblBackup
+        '
+        Me.lblBackup.AutoSize = True
+        Me.lblBackup.Location = New System.Drawing.Point(423, 14)
+        Me.lblBackup.Name = "lblBackup"
+        Me.lblBackup.Size = New System.Drawing.Size(91, 13)
+        Me.lblBackup.TabIndex = 26
+        Me.lblBackup.Text = "Tables to Backup"
+        Me.lblBackup.Visible = False
+        '
         'tabBackup
         '
-        Me.tabBackup.Controls.Add(Me.lblHours)
-        Me.tabBackup.Controls.Add(Me.upDownHours)
-        Me.tabBackup.Controls.Add(Me.lblOnlyModified)
-        Me.tabBackup.Controls.Add(Me.ckbOnlyUserEntry)
-        Me.tabBackup.Controls.Add(Me.btnCommandLine)
-        Me.tabBackup.Controls.Add(Me.btnRemove)
-        Me.tabBackup.Controls.Add(Me.cmbAttachments)
-        Me.tabBackup.Controls.Add(Me.btnAddToBackupList)
-        Me.tabBackup.Controls.Add(Me.tvAppsTables)
-        Me.tabBackup.Controls.Add(Me.ckbAppFolders)
-        Me.tabBackup.Controls.Add(Me.btnListTables)
         Me.tabBackup.Controls.Add(Me.lblProgress)
-        Me.tabBackup.Controls.Add(Me.btnFolder)
+        Me.tabBackup.Controls.Add(Me.btnCommandLine)
         Me.tabBackup.Controls.Add(Me.pb)
-        Me.tabBackup.Controls.Add(Me.lblBackupFolder)
-        Me.tabBackup.Controls.Add(Me.ckbDateFolders)
-        Me.tabBackup.Controls.Add(Me.lstBackup)
-        Me.tabBackup.Controls.Add(Me.lblTables)
-        Me.tabBackup.Controls.Add(Me.lblAttachments)
-        Me.tabBackup.Controls.Add(Me.lblBackup)
         Me.tabBackup.Controls.Add(Me.btnBackup)
-        Me.tabBackup.Controls.Add(Me.txtBackupFolder)
         Me.tabBackup.Location = New System.Drawing.Point(4, 22)
         Me.tabBackup.Name = "tabBackup"
         Me.tabBackup.Padding = New System.Windows.Forms.Padding(3)
@@ -417,9 +451,17 @@ Partial Class backup
         Me.tabBackup.Text = "Backup"
         Me.tabBackup.UseVisualStyleBackColor = True
         '
+        'lblProgress
+        '
+        Me.lblProgress.AutoSize = True
+        Me.lblProgress.Location = New System.Drawing.Point(8, 75)
+        Me.lblProgress.Name = "lblProgress"
+        Me.lblProgress.Size = New System.Drawing.Size(0, 13)
+        Me.lblProgress.TabIndex = 42
+        '
         'btnCommandLine
         '
-        Me.btnCommandLine.Location = New System.Drawing.Point(652, 108)
+        Me.btnCommandLine.Location = New System.Drawing.Point(116, 6)
         Me.btnCommandLine.Name = "btnCommandLine"
         Me.btnCommandLine.Size = New System.Drawing.Size(161, 23)
         Me.btnCommandLine.TabIndex = 29
@@ -427,41 +469,24 @@ Partial Class backup
         Me.btnCommandLine.UseVisualStyleBackColor = True
         Me.btnCommandLine.Visible = False
         '
-        'ckbOnlyUserEntry
+        'pb
         '
-        Me.ckbOnlyUserEntry.AutoSize = True
-        Me.ckbOnlyUserEntry.Location = New System.Drawing.Point(416, 90)
-        Me.ckbOnlyUserEntry.Name = "ckbOnlyUserEntry"
-        Me.ckbOnlyUserEntry.Size = New System.Drawing.Size(177, 17)
-        Me.ckbOnlyUserEntry.TabIndex = 30
-        Me.ckbOnlyUserEntry.Text = "Only built-in and user entry fields"
-        Me.ckbOnlyUserEntry.UseVisualStyleBackColor = True
+        Me.pb.Location = New System.Drawing.Point(3, 41)
+        Me.pb.Maximum = 1000
+        Me.pb.Name = "pb"
+        Me.pb.Size = New System.Drawing.Size(371, 23)
+        Me.pb.TabIndex = 22
+        Me.pb.Visible = False
         '
-        'lblOnlyModified
+        'btnBackup
         '
-        Me.lblOnlyModified.AutoSize = True
-        Me.lblOnlyModified.Location = New System.Drawing.Point(591, 91)
-        Me.lblOnlyModified.Name = "lblOnlyModified"
-        Me.lblOnlyModified.Size = New System.Drawing.Size(156, 13)
-        Me.lblOnlyModified.TabIndex = 32
-        Me.lblOnlyModified.Text = "Only records modified in the last"
-        '
-        'upDownHours
-        '
-        Me.upDownHours.Location = New System.Drawing.Point(746, 85)
-        Me.upDownHours.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
-        Me.upDownHours.Name = "upDownHours"
-        Me.upDownHours.Size = New System.Drawing.Size(38, 20)
-        Me.upDownHours.TabIndex = 33
-        '
-        'lblHours
-        '
-        Me.lblHours.AutoSize = True
-        Me.lblHours.Location = New System.Drawing.Point(786, 90)
-        Me.lblHours.Name = "lblHours"
-        Me.lblHours.Size = New System.Drawing.Size(33, 13)
-        Me.lblHours.TabIndex = 34
-        Me.lblHours.Text = "hours"
+        Me.btnBackup.Location = New System.Drawing.Point(7, 7)
+        Me.btnBackup.Name = "btnBackup"
+        Me.btnBackup.Size = New System.Drawing.Size(83, 23)
+        Me.btnBackup.TabIndex = 14
+        Me.btnBackup.Text = "Backup"
+        Me.btnBackup.UseVisualStyleBackColor = True
+        Me.btnBackup.Visible = False
         '
         'backup
         '
@@ -476,9 +501,13 @@ Partial Class backup
         Me.tabs.ResumeLayout(False)
         Me.tabAuth.ResumeLayout(False)
         Me.tabAuth.PerformLayout()
+        Me.tabOptions.ResumeLayout(False)
+        Me.tabOptions.PerformLayout()
+        CType(Me.upDownHours, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.tabTables.ResumeLayout(False)
+        Me.tabTables.PerformLayout()
         Me.tabBackup.ResumeLayout(False)
         Me.tabBackup.PerformLayout()
-        CType(Me.upDownHours, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -489,37 +518,39 @@ Partial Class backup
     Friend WithEvents txtServer As System.Windows.Forms.TextBox
     Friend WithEvents lblAppToken As System.Windows.Forms.Label
     Friend WithEvents txtAppToken As System.Windows.Forms.TextBox
-    Friend WithEvents tvAppsTables As System.Windows.Forms.TreeView
-    Friend WithEvents btnListTables As System.Windows.Forms.Button
-    Friend WithEvents btnFolder As System.Windows.Forms.Button
-    Friend WithEvents lblBackupFolder As System.Windows.Forms.Label
-    Friend WithEvents lstBackup As System.Windows.Forms.ListBox
-    Friend WithEvents btnAddToBackupList As System.Windows.Forms.Button
-    Friend WithEvents btnBackup As System.Windows.Forms.Button
-    Friend WithEvents lblAttachments As System.Windows.Forms.Label
-    Friend WithEvents cmbAttachments As System.Windows.Forms.ComboBox
-    Friend WithEvents txtBackupFolder As System.Windows.Forms.TextBox
-    Friend WithEvents btnRemove As System.Windows.Forms.Button
-    Friend WithEvents lblBackup As System.Windows.Forms.Label
-    Friend WithEvents lblTables As System.Windows.Forms.Label
-    Friend WithEvents ckbDateFolders As System.Windows.Forms.CheckBox
     Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
-    Friend WithEvents pb As System.Windows.Forms.ProgressBar
     Friend WithEvents ckbDetectProxy As System.Windows.Forms.CheckBox
     Friend WithEvents ContextMenuStrip1 As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents RetrieveTheTableReportsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents lblProgress As System.Windows.Forms.Label
-    Friend WithEvents ckbAppFolders As CheckBox
     Friend WithEvents cmbPassword As ComboBox
     Friend WithEvents btnAppToken As Button
     Friend WithEvents btnUserToken As Button
     Friend WithEvents tabs As TabControl
     Friend WithEvents tabAuth As TabPage
-    Friend WithEvents tabBackup As TabPage
     Friend WithEvents btnTest As Button
-    Friend WithEvents btnCommandLine As Button
+    Friend WithEvents tabOptions As TabPage
     Friend WithEvents lblHours As Label
     Friend WithEvents upDownHours As NumericUpDown
+    Friend WithEvents txtBackupFolder As TextBox
+    Friend WithEvents btnFolder As Button
+    Friend WithEvents lblBackupFolder As Label
+    Friend WithEvents ckbDateFolders As CheckBox
+    Friend WithEvents lblAttachments As Label
     Friend WithEvents lblOnlyModified As Label
     Friend WithEvents ckbOnlyUserEntry As CheckBox
+    Friend WithEvents cmbAttachments As ComboBox
+    Friend WithEvents ckbAppFolders As CheckBox
+    Friend WithEvents tabTables As TabPage
+    Friend WithEvents btnRemove As Button
+    Friend WithEvents btnAddToBackupList As Button
+    Friend WithEvents tvAppsTables As TreeView
+    Friend WithEvents btnListTables As Button
+    Friend WithEvents lstBackup As ListBox
+    Friend WithEvents lblTables As Label
+    Friend WithEvents lblBackup As Label
+    Friend WithEvents tabBackup As TabPage
+    Friend WithEvents btnCommandLine As Button
+    Friend WithEvents pb As ProgressBar
+    Friend WithEvents btnBackup As Button
+    Friend WithEvents lblProgress As Label
 End Class

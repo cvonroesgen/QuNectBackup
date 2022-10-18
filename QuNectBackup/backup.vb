@@ -1035,7 +1035,7 @@ Public Class backup
                 logFile.WriteLine(DateTime.Now & " " & msg)
             End If
         Else
-                Return MsgBox(msg, Style, Title)
+            Return MsgBox(msg, Style, Title)
         End If
     End Function
     Sub parseOptionsSetting(options As String)
@@ -1059,6 +1059,7 @@ Public Class backup
     Private Sub upDownHours_TextChanged(sender As Object, e As EventArgs) Handles upDownHours.TextChanged
         SaveSettings()
     End Sub
+
 End Class
 
 
