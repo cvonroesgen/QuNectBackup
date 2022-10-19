@@ -638,7 +638,7 @@ Public Class backup
                     Exit Function
                 End If
                 Dim recordCount As Integer = dr.GetValue(0)
-                quickBaseSQL = "select fid, field_type, formula, mode, label from """ & dbid & "~fields"""
+                quickBaseSQL = "select fid, field_type, formula, mode, column_name from """ & dbid & "~fields"""
                 If ckbOnlyUserEntry.Checked Then
                     quickBaseSQL &= " WHERE mode = '' OR role <> ''"
                 End If
