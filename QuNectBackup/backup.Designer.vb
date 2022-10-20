@@ -66,6 +66,8 @@ Partial Class backup
         Me.btnCommandLine = New System.Windows.Forms.Button()
         Me.pb = New System.Windows.Forms.ProgressBar()
         Me.btnBackup = New System.Windows.Forms.Button()
+        Me.lblOverAllProgress = New System.Windows.Forms.Label()
+        Me.pbOverAll = New System.Windows.Forms.ProgressBar()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.tabs.SuspendLayout()
         Me.tabAuth.SuspendLayout()
@@ -439,6 +441,8 @@ Partial Class backup
         '
         'tabBackup
         '
+        Me.tabBackup.Controls.Add(Me.lblOverAllProgress)
+        Me.tabBackup.Controls.Add(Me.pbOverAll)
         Me.tabBackup.Controls.Add(Me.lblProgress)
         Me.tabBackup.Controls.Add(Me.btnCommandLine)
         Me.tabBackup.Controls.Add(Me.pb)
@@ -454,7 +458,7 @@ Partial Class backup
         'lblProgress
         '
         Me.lblProgress.AutoSize = True
-        Me.lblProgress.Location = New System.Drawing.Point(8, 75)
+        Me.lblProgress.Location = New System.Drawing.Point(8, 126)
         Me.lblProgress.Name = "lblProgress"
         Me.lblProgress.Size = New System.Drawing.Size(0, 13)
         Me.lblProgress.TabIndex = 42
@@ -471,7 +475,7 @@ Partial Class backup
         '
         'pb
         '
-        Me.pb.Location = New System.Drawing.Point(3, 41)
+        Me.pb.Location = New System.Drawing.Point(3, 92)
         Me.pb.Maximum = 1000
         Me.pb.Name = "pb"
         Me.pb.Size = New System.Drawing.Size(371, 23)
@@ -487,6 +491,23 @@ Partial Class backup
         Me.btnBackup.Text = "Backup"
         Me.btnBackup.UseVisualStyleBackColor = True
         Me.btnBackup.Visible = False
+        '
+        'lblOverAllProgress
+        '
+        Me.lblOverAllProgress.AutoSize = True
+        Me.lblOverAllProgress.Location = New System.Drawing.Point(8, 69)
+        Me.lblOverAllProgress.Name = "lblOverAllProgress"
+        Me.lblOverAllProgress.Size = New System.Drawing.Size(0, 13)
+        Me.lblOverAllProgress.TabIndex = 44
+        '
+        'pbOverAll
+        '
+        Me.pbOverAll.Location = New System.Drawing.Point(3, 35)
+        Me.pbOverAll.Maximum = 1000
+        Me.pbOverAll.Name = "pbOverAll"
+        Me.pbOverAll.Size = New System.Drawing.Size(371, 23)
+        Me.pbOverAll.TabIndex = 43
+        Me.pbOverAll.Visible = False
         '
         'backup
         '
@@ -553,4 +574,6 @@ Partial Class backup
     Friend WithEvents pb As ProgressBar
     Friend WithEvents btnBackup As Button
     Friend WithEvents lblProgress As Label
+    Friend WithEvents lblOverAllProgress As Label
+    Friend WithEvents pbOverAll As ProgressBar
 End Class

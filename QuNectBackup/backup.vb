@@ -562,14 +562,19 @@ Public Class backup
         Using quNectConn As New OdbcConnection(connectionString)
             Try
                 quNectConn.Open()
-
+                If Not automode Then
+                    pbOverAll.Visible = True
+                    pbOverAll.Value = 0
+                    pbOverAll.Maximum = lstBackup.Items.Count
+                End If
                 Dim currentApplication As String = ""
                 For i = 0 To lstBackup.Items.Count - 1
+                    Dim dbName As String = lstBackup.Items(i).ToString()
                     If Not automode Then
                         lblProgress.Text = ""
                         lstBackup.SelectedIndex = i
+                        lblOverAllProgress.Text = "Backing up " & dbName
                     End If
-                    Dim dbName As String = lstBackup.Items(i).ToString()
                     Dim dbid As String = dbName.Substring(dbName.LastIndexOf(" ") + 1)
                     If ckbAppFolders.Checked AndAlso dbidToAppName.ContainsKey(dbid) AndAlso dbidToAppName.Item(dbid) <> currentApplication Then
                         currentApplication = dbidToAppName.Item(dbid)
@@ -588,10 +593,17 @@ Public Class backup
                     If successFailure.okayCancel = DialogResult.Cancel Then
                         Exit For
                     End If
+                    If Not automode Then
+                        pbOverAll.Value = i + 1
+                    End If
                     If successFailure.result Then
                         backupCounter += 1
                     End If
                 Next
+                If Not automode Then
+                    pbOverAll.Visible = False
+                    lblOverAllProgress.Text = ""
+                End If
                 quNectConn.Close()
                 quNectConn.Dispose()
             Catch excpt As Exception
