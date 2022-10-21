@@ -99,6 +99,19 @@ Public Class backup
         Else
             ckbDetectProxy.Checked = False
         End If
+        Dim logAPI As String = GetSetting(AppName, "backup", "LogAPI", "0")
+        If logAPI = "1" Then
+            ckbLogAPI.Checked = True
+        Else
+            ckbLogAPI.Checked = False
+        End If
+        Dim logSQL As String = GetSetting(AppName, "backup", "LogSQL", "0")
+        If logSQL = "1" Then
+            ckbLogSQL.Checked = True
+        Else
+            ckbLogSQL.Checked = False
+        End If
+
         Dim samlSetting As String = GetSetting(AppName, "Credentials", "samlsetting", "0")
         Dim optionsSetting As String = GetSetting(AppName, "Credentials", "samlsetting", "0")
 
@@ -230,6 +243,16 @@ Public Class backup
             End If
             options &= "hours=" & upDownHours.Value
             SaveSetting(AppName, "backup", "options", options)
+            If ckbLogAPI.Checked Then
+                SaveSetting(AppName, "backup", "logAPI", "1")
+            Else
+                SaveSetting(AppName, "backup", "logAPI", "0")
+            End If
+            If ckbLogSQL.Checked Then
+                SaveSetting(AppName, "backup", "logSQL", "1")
+            Else
+                SaveSetting(AppName, "backup", "logSQL", "0")
+            End If
             If appSettings.Settings.Item("tables") Is Nothing Then
                 appSettings.Settings.Add("tables", createTableList())
             Else
@@ -514,6 +537,12 @@ Public Class backup
         buildConnectionString &= ";quickbaseserver=" & txtServer.Text
         If ckbDetectProxy.Checked Then
             buildConnectionString &= ";DETECTPROXY=1"
+        End If
+        If ckbLogAPI.Checked Then
+            buildConnectionString &= ";LOGAPI=1"
+        End If
+        If ckbLogSQL.Checked Then
+            buildConnectionString &= ";LOGSQL=1"
         End If
 
         If appdbid.Length Then
@@ -1073,6 +1102,13 @@ Public Class backup
         SaveSettings()
     End Sub
 
+    Private Sub ckbLogAPI_CheckStateChanged(sender As Object, e As EventArgs) Handles ckbLogAPI.CheckStateChanged
+        SaveSettings()
+    End Sub
+
+    Private Sub ckbLogSQL_CheckStateChanged(sender As Object, e As EventArgs) Handles ckbLogSQL.CheckStateChanged
+        SaveSettings()
+    End Sub
 End Class
 
 

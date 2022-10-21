@@ -44,6 +44,8 @@ Partial Class backup
         Me.tabAuth = New System.Windows.Forms.TabPage()
         Me.btnTest = New System.Windows.Forms.Button()
         Me.tabOptions = New System.Windows.Forms.TabPage()
+        Me.ckbLogSQL = New System.Windows.Forms.CheckBox()
+        Me.ckbLogAPI = New System.Windows.Forms.CheckBox()
         Me.lblHours = New System.Windows.Forms.Label()
         Me.upDownHours = New System.Windows.Forms.NumericUpDown()
         Me.txtBackupFolder = New System.Windows.Forms.TextBox()
@@ -254,6 +256,8 @@ Partial Class backup
         '
         'tabOptions
         '
+        Me.tabOptions.Controls.Add(Me.ckbLogSQL)
+        Me.tabOptions.Controls.Add(Me.ckbLogAPI)
         Me.tabOptions.Controls.Add(Me.lblHours)
         Me.tabOptions.Controls.Add(Me.upDownHours)
         Me.tabOptions.Controls.Add(Me.txtBackupFolder)
@@ -271,6 +275,26 @@ Partial Class backup
         Me.tabOptions.TabIndex = 2
         Me.tabOptions.Text = "Options"
         Me.tabOptions.UseVisualStyleBackColor = True
+        '
+        'ckbLogSQL
+        '
+        Me.ckbLogSQL.AutoSize = True
+        Me.ckbLogSQL.Location = New System.Drawing.Point(8, 160)
+        Me.ckbLogSQL.Name = "ckbLogSQL"
+        Me.ckbLogSQL.Size = New System.Drawing.Size(388, 17)
+        Me.ckbLogSQL.TabIndex = 48
+        Me.ckbLogSQL.Text = "Log SQL statements to C:\Windows\Temp (not available from command line)"
+        Me.ckbLogSQL.UseVisualStyleBackColor = True
+        '
+        'ckbLogAPI
+        '
+        Me.ckbLogAPI.AutoSize = True
+        Me.ckbLogAPI.Location = New System.Drawing.Point(8, 139)
+        Me.ckbLogAPI.Name = "ckbLogAPI"
+        Me.ckbLogAPI.Size = New System.Drawing.Size(408, 17)
+        Me.ckbLogAPI.TabIndex = 47
+        Me.ckbLogAPI.Text = "Log Quickbase API calls to C:\Windows\Temp (not available from command line)"
+        Me.ckbLogAPI.UseVisualStyleBackColor = True
         '
         'lblHours
         '
@@ -576,4 +600,6 @@ Partial Class backup
     Friend WithEvents lblProgress As Label
     Friend WithEvents lblOverAllProgress As Label
     Friend WithEvents pbOverAll As ProgressBar
+    Friend WithEvents ckbLogSQL As CheckBox
+    Friend WithEvents ckbLogAPI As CheckBox
 End Class
