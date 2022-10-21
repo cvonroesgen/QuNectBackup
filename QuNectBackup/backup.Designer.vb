@@ -62,12 +62,12 @@ Partial Class backup
         Me.lblTables = New System.Windows.Forms.Label()
         Me.lblBackup = New System.Windows.Forms.Label()
         Me.tabBackup = New System.Windows.Forms.TabPage()
+        Me.lblOverAllProgress = New System.Windows.Forms.Label()
+        Me.pbOverAll = New System.Windows.Forms.ProgressBar()
         Me.lblProgress = New System.Windows.Forms.Label()
         Me.btnCommandLine = New System.Windows.Forms.Button()
         Me.pb = New System.Windows.Forms.ProgressBar()
         Me.btnBackup = New System.Windows.Forms.Button()
-        Me.lblOverAllProgress = New System.Windows.Forms.Label()
-        Me.pbOverAll = New System.Windows.Forms.ProgressBar()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.tabs.SuspendLayout()
         Me.tabAuth.SuspendLayout()
@@ -275,7 +275,7 @@ Partial Class backup
         'lblHours
         '
         Me.lblHours.AutoSize = True
-        Me.lblHours.Location = New System.Drawing.Point(242, 56)
+        Me.lblHours.Location = New System.Drawing.Point(330, 56)
         Me.lblHours.Name = "lblHours"
         Me.lblHours.Size = New System.Drawing.Size(195, 13)
         Me.lblHours.TabIndex = 46
@@ -283,10 +283,10 @@ Partial Class backup
         '
         'upDownHours
         '
-        Me.upDownHours.Location = New System.Drawing.Point(202, 50)
-        Me.upDownHours.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
+        Me.upDownHours.Location = New System.Drawing.Point(268, 52)
+        Me.upDownHours.Maximum = New Decimal(New Integer() {9999, 0, 0, 0})
         Me.upDownHours.Name = "upDownHours"
-        Me.upDownHours.Size = New System.Drawing.Size(38, 20)
+        Me.upDownHours.Size = New System.Drawing.Size(56, 20)
         Me.upDownHours.TabIndex = 45
         '
         'txtBackupFolder
@@ -337,11 +337,11 @@ Partial Class backup
         'lblOnlyModified
         '
         Me.lblOnlyModified.AutoSize = True
-        Me.lblOnlyModified.Location = New System.Drawing.Point(6, 56)
+        Me.lblOnlyModified.Location = New System.Drawing.Point(11, 56)
         Me.lblOnlyModified.Name = "lblOnlyModified"
-        Me.lblOnlyModified.Size = New System.Drawing.Size(195, 13)
+        Me.lblOnlyModified.Size = New System.Drawing.Size(255, 13)
         Me.lblOnlyModified.TabIndex = 44
-        Me.lblOnlyModified.Text = "Only backup records modified in the last"
+        Me.lblOnlyModified.Text = "Only backup records created and modified in the last"
         '
         'ckbOnlyUserEntry
         '
@@ -455,6 +455,23 @@ Partial Class backup
         Me.tabBackup.Text = "Backup"
         Me.tabBackup.UseVisualStyleBackColor = True
         '
+        'lblOverAllProgress
+        '
+        Me.lblOverAllProgress.AutoSize = True
+        Me.lblOverAllProgress.Location = New System.Drawing.Point(8, 69)
+        Me.lblOverAllProgress.Name = "lblOverAllProgress"
+        Me.lblOverAllProgress.Size = New System.Drawing.Size(0, 13)
+        Me.lblOverAllProgress.TabIndex = 44
+        '
+        'pbOverAll
+        '
+        Me.pbOverAll.Location = New System.Drawing.Point(3, 35)
+        Me.pbOverAll.Maximum = 1000
+        Me.pbOverAll.Name = "pbOverAll"
+        Me.pbOverAll.Size = New System.Drawing.Size(371, 23)
+        Me.pbOverAll.TabIndex = 43
+        Me.pbOverAll.Visible = False
+        '
         'lblProgress
         '
         Me.lblProgress.AutoSize = True
@@ -491,23 +508,6 @@ Partial Class backup
         Me.btnBackup.Text = "Backup"
         Me.btnBackup.UseVisualStyleBackColor = True
         Me.btnBackup.Visible = False
-        '
-        'lblOverAllProgress
-        '
-        Me.lblOverAllProgress.AutoSize = True
-        Me.lblOverAllProgress.Location = New System.Drawing.Point(8, 69)
-        Me.lblOverAllProgress.Name = "lblOverAllProgress"
-        Me.lblOverAllProgress.Size = New System.Drawing.Size(0, 13)
-        Me.lblOverAllProgress.TabIndex = 44
-        '
-        'pbOverAll
-        '
-        Me.pbOverAll.Location = New System.Drawing.Point(3, 35)
-        Me.pbOverAll.Maximum = 1000
-        Me.pbOverAll.Name = "pbOverAll"
-        Me.pbOverAll.Size = New System.Drawing.Size(371, 23)
-        Me.pbOverAll.TabIndex = 43
-        Me.pbOverAll.Visible = False
         '
         'backup
         '

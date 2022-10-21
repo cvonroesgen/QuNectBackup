@@ -636,8 +636,9 @@ Public Class backup
         backupTable.okayCancel = DialogResult.OK
         backupTable.result = True
         Dim quickBaseSQL As String = "Select count(1) from """ & dbid & """"
+        Dim lookBackTimeStamp As String = DateAdd(DateInterval.Hour, -upDownHours.Value, Now).ToString("{\t\s \'yyyy-MM-dd hh:mm:ss\'}")
         If upDownHours.Value > 0 Then
-            quickBaseSQL &= " WHERE fid2 > {fn TIMESTAMPADD(SQL_TSI_HOUR, -" & upDownHours.Value & ", {fn CURRENT_TIMESTAMP()})}"
+            quickBaseSQL &= " WHERE fid2 > " & lookBackTimeStamp
         End If
         Dim catchErrorMessage = "Could Not Get record count For table " & dbid
         Dim dr As OdbcDataReader
@@ -729,7 +730,7 @@ Public Class backup
                 'filename prefix can only be 229 characters in length
                 quickBaseSQL = "select " & selectList & " from """ & dbid & """"
                 If upDownHours.Value > 0 Then
-                    quickBaseSQL &= " WHERE fid2 > {fn TIMESTAMPADD(SQL_TSI_HOUR, -" & upDownHours.Value & ", {fn CURRENT_TIMESTAMP()})}"
+                    quickBaseSQL &= " WHERE fid2 > " & lookBackTimeStamp
                 End If
                 catchErrorMessage = "Could not backup table " & filenamePrefix & " because "
                 quNectCmd.CommandText = quickBaseSQL
