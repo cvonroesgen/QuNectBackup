@@ -370,16 +370,19 @@ Public Class backup
                 'ignore dupes
             End Try
         Next
-
-        tvAppsTables.BeginUpdate()
-        tvAppsTables.Nodes.Clear()
-        tvAppsTables.ShowNodeToolTips = True
+        If Not automode Then
+            tvAppsTables.BeginUpdate()
+            tvAppsTables.Nodes.Clear()
+            tvAppsTables.ShowNodeToolTips = True
+        End If
         Dim dbName As String
         Dim applicationName As String = ""
         Dim prevAppName As String = ""
-        pb.Value = 0
-        pb.Visible = True
-        pb.Maximum = tables.Rows.Count
+        If Not automode Then
+            pb.Value = 0
+            pb.Visible = True
+            pb.Maximum = tables.Rows.Count
+        End If
         'need to make a collection of current items in lstBackup
         Dim backupDBIDs As New Collection
         For i = 0 To lstBackup.Items.Count - 1
@@ -387,8 +390,10 @@ Public Class backup
         Next
         dbidToAppName.Clear()
         For i = 0 To tables.Rows.Count - 1
-            pb.Value = i
-            Application.DoEvents()
+            If Not automode Then
+                pb.Value = i
+                Application.DoEvents()
+            End If
             dbName = tables.Rows(i)(2)
             applicationName = tables.Rows(i)(0)
             Dim dbidMatch As Match = getDBIDfromdbName.Match(dbName)
@@ -426,9 +431,11 @@ Public Class backup
             End If
 
         Next
-        pb.Visible = False
-        tvAppsTables.EndUpdate()
-        pb.Value = 0
+        If Not automode Then
+            pb.Visible = False
+            pb.Value = 0
+            tvAppsTables.EndUpdate()
+        End If
         btnBackup.Visible = True
         btnAddToBackupList.Visible = True
         btnRemove.Visible = True
@@ -673,13 +680,16 @@ Public Class backup
         Dim dr As OdbcDataReader
         Using quNectCmd As New OdbcCommand(quickBaseSQL, quNectConn)
             Try
-                dr = quNectCmd.ExecuteReader()
-                If Not dr.HasRows Then
-                    backupTable.okayCancel = PopUpMsgBox("Could Not Get record count For table " & dbid & " perhaps because either the report's, criteria, sort order or columns refer to fields you do not have access to." & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
-                    backupTable.result = False
-                    Exit Function
+                Dim recordCount As Integer = 0
+                If Not automode Then
+                    dr = quNectCmd.ExecuteReader()
+                    If Not dr.HasRows Then
+                        backupTable.okayCancel = PopUpMsgBox("Could Not Get record count For table " & dbid & " perhaps because either the report's, criteria, sort order or columns refer to fields you do not have access to." & vbCrLf & "Would you like to continue?", MsgBoxStyle.OkCancel, AppName)
+                        backupTable.result = False
+                        Exit Function
+                    End If
+                    recordCount = dr.GetValue(0)
                 End If
-                Dim recordCount As Integer = dr.GetValue(0)
                 quickBaseSQL = "select fid, field_type, formula, mode, column_name from """ & dbid & "~fields"""
                 If ckbOnlyUserEntry.Checked Then
                     quickBaseSQL &= " WHERE mode = '' OR role <> ''"
@@ -687,7 +697,7 @@ Public Class backup
                 catchErrorMessage = "Could not get field identifiers and types for table " & dbid
 
                 quNectCmd.CommandText = quickBaseSQL
-                If Not dr.IsClosed Then
+                If Not dr Is Nothing AndAlso Not dr.IsClosed Then
                     dr.Close()
                 End If
                 dr = quNectCmd.ExecuteReader()
@@ -787,12 +797,16 @@ Public Class backup
                     comma = ""
                     objWriter.Write(vbCrLf)
                     Dim k As Integer = 0
-                    pb.Visible = True
-                    pb.Maximum = recordCount
+                    If Not automode Then
+                        pb.Visible = True
+                        pb.Maximum = recordCount
+                    End If
                     While (dr.Read())
-                        pb.Value = Math.Min(k, recordCount)
-                        lblProgress.Text = "Backing up " & k & " of " & recordCount
-                        Application.DoEvents()
+                        If Not automode Then
+                            pb.Value = Math.Min(k, recordCount)
+                            lblProgress.Text = "Backing up " & k & " of " & recordCount
+                            Application.DoEvents()
+                        End If
                         k += 1
                         For i = 0 To dr.FieldCount - 1
                             If dr.GetValue(i) Is Nothing Or IsDBNull(dr.GetValue(i)) Then
@@ -858,8 +872,10 @@ Public Class backup
                         objWriter.Write(vbCrLf)
                         comma = ""
                     End While
-                    pb.Visible = False
-                    lblProgress.Text = ""
+                    If Not automode Then
+                        pb.Visible = False
+                        lblProgress.Text = ""
+                    End If
                     objWriter.Close()
                     objWriter.Dispose()
                 End Using
@@ -1052,11 +1068,11 @@ Public Class backup
             arguments &= " ""0"""
         End If
         arguments &= " """ & cmbAttachments.SelectedIndex & """"
-        arguments &= " hours=" & upDownHours.Value
+        arguments &= " ""hours=" & upDownHours.Value
         If ckbOnlyUserEntry.Checked Then
             arguments &= ",onlyEntryFields,"
         End If
-
+        arguments &= """"
 
         frmCommandLine.txtArguments.Text = arguments
         frmCommandLine.txtProgramScript.Text = programScript
