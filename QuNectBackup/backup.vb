@@ -109,9 +109,6 @@ Public Class backup
             ckbLogSQL.Checked = False
         End If
 
-        Dim samlSetting As String = GetSetting(AppName, "Credentials", "samlsetting", "0")
-        Dim optionsSetting As String = GetSetting(AppName, "Credentials", "samlsetting", "0")
-
         Dim optionSetting As String = GetSetting(AppName, "backup", "options", "hours=0")
         parseOptionsSetting(optionSetting)
         If appSettings.Settings.Item("location") IsNot Nothing AndAlso appSettings.Settings.Item("location").Value.Length > 0 Then
