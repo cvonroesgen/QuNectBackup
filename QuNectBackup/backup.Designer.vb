@@ -256,7 +256,7 @@ Partial Class backup
         Me.tabAuth.Margin = New System.Windows.Forms.Padding(6)
         Me.tabAuth.Name = "tabAuth"
         Me.tabAuth.Padding = New System.Windows.Forms.Padding(6)
-        Me.tabAuth.Size = New System.Drawing.Size(1636, 1380)
+        Me.tabAuth.Size = New System.Drawing.Size(1634, 1189)
         Me.tabAuth.TabIndex = 0
         Me.tabAuth.Text = "Authentication"
         Me.tabAuth.UseVisualStyleBackColor = True
@@ -289,7 +289,7 @@ Partial Class backup
         Me.tabOptions.Location = New System.Drawing.Point(8, 39)
         Me.tabOptions.Margin = New System.Windows.Forms.Padding(6)
         Me.tabOptions.Name = "tabOptions"
-        Me.tabOptions.Size = New System.Drawing.Size(1636, 1380)
+        Me.tabOptions.Size = New System.Drawing.Size(1634, 1189)
         Me.tabOptions.TabIndex = 2
         Me.tabOptions.Text = "Options"
         Me.tabOptions.UseVisualStyleBackColor = True
@@ -339,15 +339,15 @@ Partial Class backup
         'txtBackupFolder
         '
         Me.txtBackupFolder.Enabled = False
-        Me.txtBackupFolder.Location = New System.Drawing.Point(526, 48)
+        Me.txtBackupFolder.Location = New System.Drawing.Point(580, 48)
         Me.txtBackupFolder.Margin = New System.Windows.Forms.Padding(6)
         Me.txtBackupFolder.Name = "txtBackupFolder"
-        Me.txtBackupFolder.Size = New System.Drawing.Size(1022, 31)
+        Me.txtBackupFolder.Size = New System.Drawing.Size(987, 31)
         Me.txtBackupFolder.TabIndex = 39
         '
         'btnFolder
         '
-        Me.btnFolder.Location = New System.Drawing.Point(1564, 48)
+        Me.btnFolder.Location = New System.Drawing.Point(513, 39)
         Me.btnFolder.Margin = New System.Windows.Forms.Padding(6)
         Me.btnFolder.Name = "btnFolder"
         Me.btnFolder.Size = New System.Drawing.Size(56, 44)
@@ -358,7 +358,7 @@ Partial Class backup
         'lblBackupFolder
         '
         Me.lblBackupFolder.AutoSize = True
-        Me.lblBackupFolder.Location = New System.Drawing.Point(538, 12)
+        Me.lblBackupFolder.Location = New System.Drawing.Point(508, 12)
         Me.lblBackupFolder.Margin = New System.Windows.Forms.Padding(6, 0, 6, 0)
         Me.lblBackupFolder.Name = "lblBackupFolder"
         Me.lblBackupFolder.Size = New System.Drawing.Size(206, 25)
@@ -514,7 +514,7 @@ Partial Class backup
         Me.tabBackup.Margin = New System.Windows.Forms.Padding(6)
         Me.tabBackup.Name = "tabBackup"
         Me.tabBackup.Padding = New System.Windows.Forms.Padding(6)
-        Me.tabBackup.Size = New System.Drawing.Size(1636, 1380)
+        Me.tabBackup.Size = New System.Drawing.Size(1634, 1189)
         Me.tabBackup.TabIndex = 1
         Me.tabBackup.Text = "Backup"
         Me.tabBackup.UseVisualStyleBackColor = True
