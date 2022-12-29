@@ -708,6 +708,7 @@ Public Class backup
                 Dim period As String = ""
                 Dim comma As String = ""
                 Dim selectList As String = ""
+                Dim csvHeader As String = ""
                 While (dr.Read())
                     Dim label As String = dr.GetString(4)
                     Dim mode As String = dr.GetString(3)
@@ -719,7 +720,8 @@ Public Class backup
                     Dim fid As String = dr.GetString(0)
                     clist &= period & fid
                     fieldTypes &= period & field_type
-                    selectList &= comma & """" & label & """"
+                    selectList &= comma & "fid" & fid
+                    csvHeader &= comma & """" & label.Replace("""", """""") & """"
                     period = "."
                     comma = ","
                 End While
@@ -781,13 +783,7 @@ Public Class backup
                 filepath = folderPath & "\" & filenamePrefix & ".csv"
 
                 Using objWriter As New System.IO.StreamWriter(filepath)
-                    comma = ""
-                    For i = 0 To dr.FieldCount - 1
-                        objWriter.Write(comma & """")
-                        objWriter.Write(Replace(CStr(dr.GetName(i)), """", """"""))
-                        objWriter.Write("""")
-                        comma = ","
-                    Next
+                    objWriter.Write(csvHeader)
                     comma = ""
                     objWriter.Write(vbCrLf)
                     Dim k As Integer = 0
