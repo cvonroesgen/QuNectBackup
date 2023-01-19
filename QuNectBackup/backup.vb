@@ -545,7 +545,9 @@ Public Class backup
         If ckbLogSQL.Checked Then
             buildConnectionString &= ";LOGSQL=1"
         End If
-
+        If ckbOnlyUserEntry.Checked Then
+            buildConnectionString &= ";DONTFOLLOWRELATIONSHIPS=1"
+        End If
         If appdbid.Length Then
             buildConnectionString &= ";APPID=" & appdbid & ";APPNAME=" & qdbAppName
         End If
