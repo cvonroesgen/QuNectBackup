@@ -534,6 +534,11 @@ Public Class backup
     Private Function buildConnectionString(additionalFolders As String) As String
         buildConnectionString = "FIELDNAMECHARACTERS=all;uid=" & txtUsername.Text
         buildConnectionString &= ";pwd=" & txtPassword.Text
+        If chkUnicode.checked Then
+            buildConnectionString &= ";driver={QuNect Unicode ODBC for QuickBase};IGNOREDUPEFIELDNAMES=1;"
+        Else
+            buildConnectionString &= ";driver={QuNect ODBC for QuickBase};IGNOREDUPEFIELDNAMES=1;"
+        End If
         buildConnectionString &= ";driver={QuNect ODBC for QuickBase};IGNOREDUPEFIELDNAMES=1;"
         buildConnectionString &= ";quickbaseserver=" & txtServer.Text
         If ckbDetectProxy.Checked Then
