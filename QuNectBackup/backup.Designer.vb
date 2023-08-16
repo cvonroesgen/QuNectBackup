@@ -42,7 +42,7 @@ Partial Class backup
         Me.btnUserToken = New System.Windows.Forms.Button()
         Me.tabs = New System.Windows.Forms.TabControl()
         Me.tabAuth = New System.Windows.Forms.TabPage()
-        Me.chkUnicode = New System.Windows.Forms.CheckBox()
+        Me.ckbUnicode = New System.Windows.Forms.CheckBox()
         Me.btnTest = New System.Windows.Forms.Button()
         Me.tabOptions = New System.Windows.Forms.TabPage()
         Me.ckbLogSQL = New System.Windows.Forms.CheckBox()
@@ -241,7 +241,7 @@ Partial Class backup
         '
         'tabAuth
         '
-        Me.tabAuth.Controls.Add(Me.chkUnicode)
+        Me.tabAuth.Controls.Add(Me.ckbUnicode)
         Me.tabAuth.Controls.Add(Me.btnTest)
         Me.tabAuth.Controls.Add(Me.txtPassword)
         Me.tabAuth.Controls.Add(Me.txtUsername)
@@ -265,14 +265,14 @@ Partial Class backup
         '
         'chkUnicode
         '
-        Me.chkUnicode.AutoSize = True
-        Me.chkUnicode.Location = New System.Drawing.Point(20, 398)
-        Me.chkUnicode.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
-        Me.chkUnicode.Name = "chkUnicode"
-        Me.chkUnicode.Size = New System.Drawing.Size(343, 24)
-        Me.chkUnicode.TabIndex = 83
-        Me.chkUnicode.Text = "Use QuNect Unicode ODBC for QuickBase "
-        Me.chkUnicode.UseVisualStyleBackColor = True
+        Me.ckbUnicode.AutoSize = True
+        Me.ckbUnicode.Location = New System.Drawing.Point(20, 398)
+        Me.ckbUnicode.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.ckbUnicode.Name = "chkUnicode"
+        Me.ckbUnicode.Size = New System.Drawing.Size(343, 24)
+        Me.ckbUnicode.TabIndex = 83
+        Me.ckbUnicode.Text = "Use QuNect Unicode ODBC for QuickBase "
+        Me.ckbUnicode.UseVisualStyleBackColor = True
         '
         'btnTest
         '
@@ -662,5 +662,5 @@ Partial Class backup
     Friend WithEvents pbOverAll As ProgressBar
     Friend WithEvents ckbLogSQL As CheckBox
     Friend WithEvents ckbLogAPI As CheckBox
-    Friend WithEvents chkUnicode As CheckBox
+    Friend WithEvents ckbUnicode As CheckBox
 End Class

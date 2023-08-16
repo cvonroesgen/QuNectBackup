@@ -40,6 +40,7 @@ Public Class backup
         attachments = 9
         logFile = 10
         options = 11
+        unicode = 12
     End Enum
     Private logFile As StreamWriter
     Enum PasswordOrToken
@@ -78,6 +79,12 @@ Public Class backup
         txtServer.Text = GetSetting(AppName, "Credentials", "server", "")
         txtAppToken.Text = GetSetting(AppName, "Credentials", "apptoken", "")
         cmbAttachments.Text = GetSetting(AppName, "attachments", "mode", "Do not download")
+        Dim unicodeSetting As String = GetSetting(AppName, "unicode", "mode", "0")
+        If unicodeSetting = "1" Then
+            ckbUnicode.Checked = True
+        Else
+            ckbUnicode.Checked = False
+        End If
         Dim dateFoldersSetting As String = GetSetting(AppName, "datefolders", "mode", "0")
         If dateFoldersSetting = "1" Then
             ckbDateFolders.Checked = True
@@ -156,6 +163,13 @@ Public Class backup
                 logFile.WriteLine()
                 logFile.WriteLine(DateTime.Now & " " & "Started backup: " & dbids)
             End If
+            If cmdLineArgs.Length > arg.unicode Then
+                If cmdLineArgs(arg.unicode) = "1" Then
+                    ckbUnicode.Checked = True
+                Else
+                    ckbUnicode.Checked = False
+                End If
+            End If
             listTables(dbids)
             backup()
             If cmdLineArgs.Length > arg.logFile Then
@@ -166,7 +180,6 @@ Public Class backup
             Me.Close()
         Else
             automode = False
-
             Me.Text = Title & " " & myBuildInfo.ProductVersion
             If txtUsername.Text.Length > 0 And txtPassword.Text.Length > 0 And txtServer.Text.Length > 0 Then
                 If (cmbPassword.SelectedIndex = PasswordOrToken.password And txtAppToken.Text.Length > 0) Or cmbPassword.SelectedIndex = PasswordOrToken.token Then
@@ -214,6 +227,11 @@ Public Class backup
             SaveSetting(AppName, "Credentials", "apptoken", txtAppToken.Text)
             If (cmbAttachments.SelectedIndex = 3 And qdbVer.year >= yearForAllFileURLs) Or cmbAttachments.SelectedIndex < 3 Then
                 SaveSetting(AppName, "attachments", "mode", cmbAttachments.Text)
+            End If
+            If ckbUnicode.Checked Then
+                SaveSetting(AppName, "unicode", "mode", "1")
+            Else
+                SaveSetting(AppName, "unicode", "mode", "0")
             End If
             If ckbDateFolders.Checked Then
                 SaveSetting(AppName, "datefolders", "mode", "1")
@@ -287,7 +305,11 @@ Public Class backup
             Using quNectConn As New OdbcConnection(connectionString)
                 quNectConn.Open()
                 Dim ver As String = quNectConn.ServerVersion
-                Me.Text = Title & " " & myBuildInfo.FileVersion & " with QuNect ODBC for QuickBase " & ver
+                Dim product As String = "QuNect ODBC for QuickBase"
+                If ckbUnicode.Checked Then
+                    product = "QuNect Unicode ODBC for QuickBase"
+                End If
+                Me.Text = Title & " " & myBuildInfo.FileVersion & " with " & product & " " & ver
                 Dim m As Match = Regex.Match(ver, "\d+\.(\d+)\.(\d+)\.(\d+)")
                 qdbVer.year = CInt(m.Groups(1).Value)
                 qdbVer.major = CInt(m.Groups(2).Value)
@@ -534,12 +556,11 @@ Public Class backup
     Private Function buildConnectionString(additionalFolders As String) As String
         buildConnectionString = "FIELDNAMECHARACTERS=all;uid=" & txtUsername.Text
         buildConnectionString &= ";pwd=" & txtPassword.Text
-        If chkUnicode.checked Then
+        If ckbUnicode.Checked Then
             buildConnectionString &= ";driver={QuNect Unicode ODBC for QuickBase};IGNOREDUPEFIELDNAMES=1;"
         Else
             buildConnectionString &= ";driver={QuNect ODBC for QuickBase};IGNOREDUPEFIELDNAMES=1;"
         End If
-        buildConnectionString &= ";driver={QuNect ODBC for QuickBase};IGNOREDUPEFIELDNAMES=1;"
         buildConnectionString &= ";quickbaseserver=" & txtServer.Text
         If ckbDetectProxy.Checked Then
             buildConnectionString &= ";DETECTPROXY=1"
@@ -1070,6 +1091,11 @@ Public Class backup
             arguments &= ",onlyEntryFields,"
         End If
         arguments &= """"
+        If ckbUnicode.Checked Then
+            arguments &= " ""1"""
+        Else
+            arguments &= " ""0"""
+        End If
 
         frmCommandLine.txtArguments.Text = arguments
         frmCommandLine.txtProgramScript.Text = programScript
@@ -1123,6 +1149,9 @@ Public Class backup
         SaveSettings()
     End Sub
 
+    Private Sub ckbUnicode_CheckStateChanged(sender As Object, e As EventArgs) Handles ckbUnicode.CheckStateChanged
+        SaveSettings()
+    End Sub
 End Class
 
 
