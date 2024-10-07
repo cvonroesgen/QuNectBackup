@@ -48,6 +48,11 @@ Public Class backup
         password = 1
         token = 2
     End Enum
+    Enum FieldsToBackup
+        allExceptReportLinkAndformulaURL = 0
+        builtInAndEntry = 1
+        allFields = 2
+    End Enum
     Private qdbVer As qdbVersion = New qdbVersion
 
     Function createDBIDList() As String
@@ -250,8 +255,10 @@ Public Class backup
             End If
             SaveSetting(AppName, "Credentials", "passwordOrToken", cmbPassword.SelectedIndex)
             Dim options As String = ""
-            If ckbOnlyUserEntry.Checked Then
+            If cmbFieldsToBackup.SelectedIndex = FieldsToBackup.builtInAndEntry Then
                 options &= "onlyEntryFields,"
+            ElseIf cmbFieldsToBackup.SelectedIndex = FieldsToBackup.allFields Then
+                options &= "allFields,"
             End If
             options &= "hours=" & upDownHours.Value
             SaveSetting(AppName, "backup", "options", options)
@@ -571,7 +578,7 @@ Public Class backup
         If ckbLogSQL.Checked Then
             buildConnectionString &= ";LOGSQL=1"
         End If
-        If ckbOnlyUserEntry.Checked Then
+        If cmbFieldsToBackup.SelectedIndex = FieldsToBackup.builtInAndEntry Then
             buildConnectionString &= ";DONTFOLLOWRELATIONSHIPS=1"
         End If
         If appdbid.Length Then
@@ -604,6 +611,9 @@ Public Class backup
             buildConnectionString &= ";APPTOKEN=" & txtAppToken.Text
         Else
             buildConnectionString &= ";PWDISPASSWORD=0"
+        End If
+        If cmbFieldsToBackup.SelectedIndex = FieldsToBackup.allFields Then
+            buildConnectionString &= ";ALLFIELDS=1"
         End If
     End Function
     Private Sub backup()
@@ -699,7 +709,7 @@ Public Class backup
             quickBaseSQL &= " WHERE fid2 > " & lookBackTimeStamp
         End If
         Dim catchErrorMessage = "Could Not Get record count For table " & dbid
-        Dim dr As OdbcDataReader
+        Dim dr As OdbcDataReader = Nothing
         Using quNectCmd As New OdbcCommand(quickBaseSQL, quNectConn)
             Try
                 Dim recordCount As Integer = 0
@@ -713,7 +723,7 @@ Public Class backup
                     recordCount = dr.GetValue(0)
                 End If
                 quickBaseSQL = "select fid, field_type, formula, mode, column_name from """ & dbid & "~fields"""
-                If ckbOnlyUserEntry.Checked Then
+                If cmbFieldsToBackup.SelectedIndex = FieldsToBackup.builtInAndEntry Then
                     quickBaseSQL &= " WHERE mode = '' OR role <> ''"
                 End If
                 catchErrorMessage = "Could not get field identifiers and types for table " & dbid
@@ -1087,8 +1097,10 @@ Public Class backup
         End If
         arguments &= " """ & cmbAttachments.SelectedIndex & """"
         arguments &= " ""hours=" & upDownHours.Value
-        If ckbOnlyUserEntry.Checked Then
+        If cmbFieldsToBackup.SelectedIndex = FieldsToBackup.builtInAndEntry Then
             arguments &= ",onlyEntryFields,"
+        ElseIf cmbFieldsToBackup.SelectedIndex = FieldsToBackup.allFields Then
+            arguments &= ",allFields,"
         End If
         arguments &= """"
         If ckbUnicode.Checked Then
@@ -1121,9 +1133,11 @@ Public Class backup
     End Function
     Sub parseOptionsSetting(options As String)
         If Regex.IsMatch(options, "onlyEntryFields", RegexOptions.IgnoreCase) Then
-            ckbOnlyUserEntry.Checked = True
+            cmbFieldsToBackup.SelectedIndex = FieldsToBackup.builtInAndEntry
+        ElseIf Regex.IsMatch(options, "allFields", RegexOptions.IgnoreCase) Then
+            cmbFieldsToBackup.SelectedIndex = FieldsToBackup.allFields
         Else
-            ckbOnlyUserEntry.Checked = False
+            cmbFieldsToBackup.SelectedIndex = FieldsToBackup.allExceptReportLinkAndformulaURL
         End If
         Dim m As Match = Regex.Match(options, "hours=(\d+)", RegexOptions.IgnoreCase)
         If m.Success Then
@@ -1133,7 +1147,7 @@ Public Class backup
         End If
     End Sub
 
-    Private Sub ckbOnlyUserEntry_CheckStateChanged(sender As Object, e As EventArgs) Handles ckbOnlyUserEntry.CheckStateChanged
+    Private Sub ckbOnlyUserEntry_CheckStateChanged(sender As Object, e As EventArgs)
         SaveSettings()
     End Sub
 
